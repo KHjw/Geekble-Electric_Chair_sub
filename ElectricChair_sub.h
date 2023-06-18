@@ -10,10 +10,10 @@ void Serial_HandShake();
 void Serial_RestartCheck();
 
 String last_recv;
-String last_send;
 
 void SerialInit();
 void Serial_Read();
+void Serial_Control(String recv_data);
 
 //****************************************SimpleTimer SETUP****************************************
 SimpleTimer BlinkTimer;
@@ -30,7 +30,7 @@ void ConnTimerFunc();
 
 int BlinkTimerId;
 int ShockTimerId;
-int BreatheTimerId;
+int BreatheTimerId; 
 
 // blink setup
 unsigned long BlinkTime = 250;   // 1sec
@@ -45,6 +45,8 @@ bool blink_on = true;
 unsigned long ShockCountTime = 1000;    // 2sec
 int shock_interval = 5;                 // ES 인터벌 간격(초)
 int shock_cnt = 0;
+int shock_arr = 0;
+int shock_end = 0;
 
 // breathe setup
 int breathe_step = 0;
@@ -95,13 +97,15 @@ void LightMode(int light_code, int color_code, int mode);
 
 //****************************************Electric Shock SETUP****************************************
 void EsInit();
+
 void ES_Stage(int stage);
 void ES_Control(int start_point, int end_point);
 void ES_Loop_Confirm(int loop_num);
 void ES_Start();
 
 
-int EsArr[20];
+int EsArr[60] = {0};
 int EsArr_cnt = 0;
+bool IsEsOn = false;
 
 #endif

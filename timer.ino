@@ -3,7 +3,7 @@ void TimerInit(){
     BlinkTimerId = BlinkTimer.setInterval(BlinkTime,BlinkTimerFunc);
     BlinkTimer.deleteTimer(BlinkTimerId); 
     BreatheTimerId = BreatheTimer.setInterval(BreatheTime,BreatheTimerFunc);
-    BreatheTimer.deleteTimer(ShockTimerId); 
+    BreatheTimer.deleteTimer(BreatheTimerId); 
     ShockTimerId = ShockTimer.setInterval(ShockCountTime,ShockTimerFunc);
     ShockTimer.deleteTimer(ShockTimerId);
 }
@@ -81,6 +81,15 @@ void BreatheTimerFunc(){
 
 //****************************************Shock Timer****************************************
 void ShockTimerFunc(){
+    if(shock_cnt == shock_end){
+        ShockTimer.deleteTimer(ShockTimerId);
+        shock_end = 0;
+    }
+    else if(shock_cnt == EsArr[shock_arr]){
+        if((shock_arr%2) == 0)  digitalWrite(ES_PIN, HIGH);
+        else                    digitalWrite(ES_PIN, LOW);
+        shock_arr++;
+    }
     shock_cnt++;
 }
 

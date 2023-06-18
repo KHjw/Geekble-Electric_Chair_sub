@@ -14,12 +14,14 @@
 
 void setup(){
   Serial.begin(115200);
+  Serial.println("===============TTGO INIT===============");
   Serial_HandShake();
-  SerialInit();
   TimerInit();
   NeopixelInit();
   LedInit();
   LightControl(RED, BLINK, BLINK, BREATHE);
+  EsInit();
+  Serial.println("===============TTGO INITALIZED===============")
 }
 
 void loop(){
