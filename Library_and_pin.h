@@ -7,15 +7,16 @@
 #include <SimpleTimer.h>
 #include <HardwareSerial.h>
 
-#define SUBTTGO_RX_PIN  39
-#define SUBTTGO_TX_PIN  33
+#define SUBTTGO_RX_PIN  12
+#define SUBTTGO_TX_PIN  13
 
 #define LED_R			12
 #define LED_G			13
 #define LED_B           15
- 
-#define	NEO_TAG			25
-#define NEO_BOT			26
+
+#define NEO_TOP         25
+#define	NEO_TAG			26
+#define NEO_BOT			27
 
 #define ES_PIN          2
 

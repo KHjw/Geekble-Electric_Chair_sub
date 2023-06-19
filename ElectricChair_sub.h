@@ -4,7 +4,7 @@
 #include "Library_and_pin.h"
 
 //****************************************Serial SETUP****************************************
-HardwareSerial subTTGO(1);
+HardwareSerial subTTGO(2);
 
 void Serial_HandShake();
 void Serial_RestartCheck();
@@ -101,10 +101,10 @@ void EsInit();
 void ES_Stage(int stage);
 void ES_Control(int start_point, int end_point);
 void ES_Loop_Confirm(int loop_num);
-void ES_Start();
-
+void ES_Print();
 
 int EsArr[60] = {0};
+int EsArr_max = 60;
 int EsArr_cnt = 0;
 bool IsEsOn = false;
 

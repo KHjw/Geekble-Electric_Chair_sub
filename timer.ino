@@ -70,7 +70,6 @@ void BreatheTimerStart(int Neo, int NeoColor){
 }
 
 void BreatheTimerFunc(){
-    Serial.print("Breathe!");
     if(breathe_step >= breathe_step_max)    breathe_step = 0;
     for(int i=0; i<3; i++){
         breathe_color_arr[i] = color[breathe_color][i] /breathe_step_max*breathe_step;

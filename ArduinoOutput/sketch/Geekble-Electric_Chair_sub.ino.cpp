@@ -16,18 +16,20 @@
 
 #line 15 "c:\\Github\\Geekble-Electric_Chair_sub\\Geekble-Electric_Chair_sub.ino"
 void setup();
-#line 25 "c:\\Github\\Geekble-Electric_Chair_sub\\Geekble-Electric_Chair_sub.ino"
+#line 27 "c:\\Github\\Geekble-Electric_Chair_sub\\Geekble-Electric_Chair_sub.ino"
 void loop();
 #line 2 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
 void EsInit();
-#line 6 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
+#line 8 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
+void EsOn(bool tf);
+#line 21 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
 void ES_Stage(int stage);
-#line 29 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
+#line 48 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
 void ES_Control(int start_point, int end_point);
-#line 36 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
+#line 55 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
 void ES_Loop_Confirm(int loop_num);
-#line 41 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
-void ES_Start();
+#line 72 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
+void ES_Print();
 #line 2 "c:\\Github\\Geekble-Electric_Chair_sub\\light_control.ino"
 void NeopixelInit();
 #line 9 "c:\\Github\\Geekble-Electric_Chair_sub\\light_control.ino"
@@ -48,12 +50,10 @@ void LightMode(int light_code, int color_code, int mode);
 void SerialInit();
 #line 5 "c:\\Github\\Geekble-Electric_Chair_sub\\serial.ino"
 void Serial_HandShake();
-#line 24 "c:\\Github\\Geekble-Electric_Chair_sub\\serial.ino"
+#line 31 "c:\\Github\\Geekble-Electric_Chair_sub\\serial.ino"
 void Serial_RestartCheck();
-#line 33 "c:\\Github\\Geekble-Electric_Chair_sub\\serial.ino"
+#line 45 "c:\\Github\\Geekble-Electric_Chair_sub\\serial.ino"
 void Serial_Read();
-#line 59 "c:\\Github\\Geekble-Electric_Chair_sub\\serial.ino"
-void Serial_Send(String data);
 #line 1 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
 void TimerInit();
 #line 12 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
@@ -68,32 +68,50 @@ void BlinkAllTimerFunc();
 void BreatheTimerStart(int Neo, int NeoColor);
 #line 72 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
 void BreatheTimerFunc();
-#line 83 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
+#line 82 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
 void ShockTimerFunc();
-#line 88 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
+#line 96 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
 void ConnTimerFunc();
 #line 15 "c:\\Github\\Geekble-Electric_Chair_sub\\Geekble-Electric_Chair_sub.ino"
 void setup(){
   Serial.begin(115200);
+  Serial.println("===============TTGO INIT===============");
   Serial_HandShake();
-  SerialInit();
-  TimerInit();
-  NeopixelInit();
-  LedInit();
-  LightControl(RED, BLINK, BLINK, BREATHE);
+  // TimerInit();
+  // NeopixelInit();
+  // LedInit();
+  // LightControl(RED, STATIC, STATIC, STATIC);
+  // EsInit();
+  Serial.println("===============TTGO INITALIZED===============");
 }
 
 void loop(){
-  Serial_Read();
-  ShockTimer.run();
-  BlinkTimer.run();
-  BreatheTimer.run();
+  Serial_RestartCheck();
+  // ShockTimer.run();
+  // BlinkTimer.run();
+  // BreatheTimer.run();
+  delay(1000);
 }
 #line 1 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
 //****************************************ES SETUP****************************************
 void EsInit(){
+  Serial.println("EsInit");
   pinMode(ES_PIN, OUTPUT);
+  EsOn(false);
 }
+
+void EsOn(bool tf){
+  if(tf == true){
+    Serial.println("ES!!!");
+    digitalWrite(ES_PIN, HIGH);
+    IsEsOn = true;
+  }
+  else{
+    digitalWrite(ES_PIN, LOW);
+    IsEsOn = false;
+  }
+}
+
 //****************************************ES Stage****************************************
 void ES_Stage(int stage){
   switch (stage){
@@ -112,26 +130,45 @@ void ES_Stage(int stage){
     ES_Control(3,5);
     ES_Loop_Confirm(4);
     break;
+  case 10:
+    ES_Control(1,2);
+    ES_Loop_Confirm(1);
   case 0:
   default:
+    ShockTimer.deleteTimer(ShockTimerId);
     break;
   }
 }
 
-void ES_Control(int start_point, int end_point){
+void ES_Control(int start_point, int end_point){    // ES 정보입력 (시점, 종점)
   EsArr[EsArr_cnt] = start_point;
   EsArr_cnt ++;
   EsArr[EsArr_cnt] = end_point;
   EsArr_cnt ++;
 }
 
-void ES_Loop_Confirm(int loop_num){
+void ES_Loop_Confirm(int loop_num){                 // ES 입력정보 적용
+  if(loop_num < 1)    loop_num = 0;
+  int loop_end = EsArr_cnt/2;
+  for(int i=0; i<loop_num * loop_end; i++){
+    ES_Control(EsArr[i],EsArr[i+1]);
+    if(EsArr_cnt > EsArr_max)  goto ES_START;
+  }
+  ES_START:
+  ES_Print();
+  shock_end = EsArr_cnt; 
   EsArr_cnt = 0;
   shock_cnt = 0;
+  shock_arr = 0;
+  ShockTimer.deleteTimer(ShockTimerId);
+  ShockTimerId = ShockTimer.setInterval(ShockCountTime,ShockTimerFunc);
 }
 
-void ES_Start(){
-  EsArr;
+void ES_Print(){
+  String EsData;
+  for(int i; i<EsArr_cnt; i++)
+    EsData += EsArr[i];
+  Serial.println(EsData);
 }
 #line 1 "c:\\Github\\Geekble-Electric_Chair_sub\\light_control.ino"
 //****************************************Neopixel SETUP****************************************
@@ -292,38 +329,54 @@ void SerialInit(){
 }
 
 void Serial_HandShake(){
+  Serial.println("Serial Handshake Init");
   subTTGO.begin(9600, SERIAL_8N1, SUBTTGO_RX_PIN, SUBTTGO_TX_PIN);
   RECONNECT_TTGO:
+  delay(100);
   Serial.println("Connecting to TTGO");
-  subTTGO.println("connect");
+  subTTGO.print("connect ");
   if(subTTGO.available()){
-    String recv_data = subTTGO.readStringUntil('\n');
+    String recv_data = subTTGO.readStringUntil(' ');
     if(recv_data == "connect"){
-      subTTGO.println("ok");
+      Serial.println("recv CONNECT");
+      subTTGO.print("ok ");
       goto RECONNECT_TTGO;
     }
     else if(recv_data == "ok"){
       Serial.println("TTGO CONNECTED");
     }
-    else
+    else{
+      Serial.println("from main : " + recv_data);
+      Serial.println("connection failed");
       goto RECONNECT_TTGO;
+    }
   }
+  else goto RECONNECT_TTGO;
 }
 
 void Serial_RestartCheck(){
+  Serial.print("0");
   if(subTTGO.available()){
-    String recv_data = subTTGO.readStringUntil('\n');
+    String recv_data = subTTGO.readStringUntil(' ');
     if(recv_data == "connect"){
-      subTTGO.println("ok");
+      subTTGO.print("ok ");
+      Serial.println("send CONNECT");
     }
+    else 
+      Serial.println("from main : " + recv_data);
   }
+  delay(500);
 }
 
 void Serial_Read(){
+  Serial.print("0");
   if(subTTGO.available()){
-    String recv_data = subTTGO.readStringUntil('\n');
-    if(recv_data == "connect")             {subTTGO.println("ok");
-                                            LightControl(PURPLE, STATIC, STATIC, STATIC);}
+    String recv_data = subTTGO.readStringUntil(' ');
+    if(recv_data == "connect"){
+      subTTGO.print("ok ");
+      LightControl(PURPLE, STATIC, STATIC, STATIC);
+      Serial.println("from main : " + recv_data);
+    }
     else if(recv_data == "setting")         LightControl(WHITE,  STATIC, STATIC, STATIC);
     else if(recv_data == "ready")       		LightControl(RED,    STATIC, STATIC, BREATHE);
     else if(recv_data == "activate_wait")   LightControl(YELLOW, STATIC, STATIC, BREATHE);
@@ -340,13 +393,9 @@ void Serial_Read(){
     else if(recv_data == "rescue")					LightControl(GREEN,  STATIC, BLINK,  RISE);
     else if(recv_data == "rescue_suc")			LightControl(GREEN,  STATIC, STATIC, STATIC);
     else if(recv_data == "rescue_fail")		  LightControl(RED,    BLINK,  BLINK,  BLINK);
-    
+    else                                    Serial.println("from main : " + recv_data);
     last_recv = recv_data;
   }
-}
-
-void Serial_Send(String data){
-
 }
 #line 1 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
 void TimerInit(){
@@ -354,7 +403,7 @@ void TimerInit(){
     BlinkTimerId = BlinkTimer.setInterval(BlinkTime,BlinkTimerFunc);
     BlinkTimer.deleteTimer(BlinkTimerId); 
     BreatheTimerId = BreatheTimer.setInterval(BreatheTime,BreatheTimerFunc);
-    BreatheTimer.deleteTimer(ShockTimerId); 
+    BreatheTimer.deleteTimer(BreatheTimerId); 
     ShockTimerId = ShockTimer.setInterval(ShockCountTime,ShockTimerFunc);
     ShockTimer.deleteTimer(ShockTimerId);
 }
@@ -421,7 +470,6 @@ void BreatheTimerStart(int Neo, int NeoColor){
 }
 
 void BreatheTimerFunc(){
-    Serial.print("Breathe!");
     if(breathe_step >= breathe_step_max)    breathe_step = 0;
     for(int i=0; i<3; i++){
         breathe_color_arr[i] = color[breathe_color][i] /breathe_step_max*breathe_step;
@@ -432,6 +480,15 @@ void BreatheTimerFunc(){
 
 //****************************************Shock Timer****************************************
 void ShockTimerFunc(){
+    if(shock_cnt == shock_end){
+        ShockTimer.deleteTimer(ShockTimerId);
+        shock_end = 0;
+    }
+    else if(shock_cnt == EsArr[shock_arr]){
+        if((shock_arr%2) == 0)  digitalWrite(ES_PIN, HIGH);
+        else                    digitalWrite(ES_PIN, LOW);
+        shock_arr++;
+    }
     shock_cnt++;
 }
 
