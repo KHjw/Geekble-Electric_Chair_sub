@@ -5,7 +5,7 @@
 #include "Library_and_pin.h"
 
 //****************************************Serial SETUP****************************************
-HardwareSerial subTTGO(2);
+HardwareSerial subTTGO(1);
 
 void Serial_HandShake();
 void Serial_RestartCheck();
@@ -65,34 +65,30 @@ unsigned long ConnectTime = 1000;    // 1sec
 //****************************************Light Control SETUP****************************************
 void NeopixelInit();
 void AllNeoColor(int color_code);
-void NeoBlink(int neo_code, int color_code);
+void NeoRise(int neo_code, int color_code, int step, int step_cnt);
 
-void LedInit();
-void LedColor(int color_code);
-void LedBlink(int color_code);
+const int NeoNum = 3;
+const int NumPixels[3] = {120,12,250};
 
-
-const int NeoNum = 2;
-const int NumPixels[2] = {12,12};
-
-enum {TAG = 0, BOT, LED, LEDTAG,ALLNEO};   // led_code
-Adafruit_NeoPixel pixels[2] = {Adafruit_NeoPixel(NumPixels[TAG], NEO_TAG, NEO_GRB + NEO_KHZ800),
+enum {TOP = 0, TAG, BOT, LED, LEDTAG, ALLNEO};   // led_code
+Adafruit_NeoPixel pixels[3] = {Adafruit_NeoPixel(NumPixels[TOP], NEO_TOP, NEO_GRB + NEO_KHZ800),
+                               Adafruit_NeoPixel(NumPixels[TAG], NEO_TAG, NEO_GRB + NEO_KHZ800),
                                Adafruit_NeoPixel(NumPixels[BOT], NEO_BOT, NEO_GRB + NEO_KHZ800)};
 
 enum {WHITE = 0, RED, YELLOW, GREEN, BLUE, PURPLE, BLACK, BLUE0, BLUE1, BLUE2, BLUE3};     // Neopixel 색상정보
-int color[11][3] = {  {20, 20, 20},   //WHITE
-                      {40, 0, 0},     //RED
-                      {40, 40, 0},    //YELLOW
-                      {0, 40, 0},     //GREEN
-                      {0, 0, 40},     //BLUE
-                      {40, 0, 40},    //PURPLE
+int color[11][3] = {  {100, 100, 100},   //WHITE
+                      {100, 0, 0},     //RED
+                      {100, 100, 0},    //YELLOW
+                      {0, 100, 0},     //GREEN
+                      {0, 0, 100},     //BLUE
+                      {100, 0, 100},    //PURPLE
                       {0, 0, 0},      //BLACK
                       {0, 0, 20},     //ENCODERBLUE0
-                      {0, 0, 40},     //ENCODERBLUE1
+                      {0, 0, 100},     //ENCODERBLUE1
                       {0, 0, 60},     //ENCODERBLUE2
                       {0, 0, 80}};    //ENCODERBLUE3
 
-enum {STATIC = 0, BREATHE, RISE, BLINK = 7};
+enum {STATIC = 0, BREATHE, RISE, BLINK = 10};
 void LightControl(int color_code, int led_mode, int tag_mode, int bot_mode);
 void LightMode(int light_code, int color_code, int mode);
 

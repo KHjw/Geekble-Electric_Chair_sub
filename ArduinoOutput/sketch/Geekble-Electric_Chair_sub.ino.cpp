@@ -16,81 +16,71 @@
 
 #line 15 "c:\\Github\\Geekble-Electric_Chair_sub\\Geekble-Electric_Chair_sub.ino"
 void setup();
-#line 27 "c:\\Github\\Geekble-Electric_Chair_sub\\Geekble-Electric_Chair_sub.ino"
+#line 26 "c:\\Github\\Geekble-Electric_Chair_sub\\Geekble-Electric_Chair_sub.ino"
 void loop();
 #line 2 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
 void EsInit();
 #line 8 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
 void EsOn(bool tf);
-#line 21 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
+#line 22 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
 void ES_Stage(int stage);
-#line 48 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
+#line 50 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
 void ES_Control(int start_point, int end_point);
-#line 55 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
+#line 57 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
 void ES_Loop_Confirm(int loop_num);
-#line 72 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
+#line 76 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
 void ES_Print();
 #line 2 "c:\\Github\\Geekble-Electric_Chair_sub\\light_control.ino"
 void NeopixelInit();
 #line 9 "c:\\Github\\Geekble-Electric_Chair_sub\\light_control.ino"
 void AllNeoColor(int color_code);
 #line 15 "c:\\Github\\Geekble-Electric_Chair_sub\\light_control.ino"
-void NeoBlink(int neo_code, int color_code);
-#line 33 "c:\\Github\\Geekble-Electric_Chair_sub\\light_control.ino"
-void LedInit();
-#line 40 "c:\\Github\\Geekble-Electric_Chair_sub\\light_control.ino"
-void LedColor(int color_code);
-#line 81 "c:\\Github\\Geekble-Electric_Chair_sub\\light_control.ino"
-void LedBlink(int color_code);
-#line 91 "c:\\Github\\Geekble-Electric_Chair_sub\\light_control.ino"
-void LightControl(int color_code, int led_mode, int tag_mode, int bot_mode);
-#line 110 "c:\\Github\\Geekble-Electric_Chair_sub\\light_control.ino"
-void LightMode(int light_code, int color_code, int mode);
+void NeoRise(int neo_code, int color_code, int step, int step_cnt);
+#line 24 "c:\\Github\\Geekble-Electric_Chair_sub\\light_control.ino"
+void LightControl(int color_code, int top_mode, int tag_mode, int bot_mode);
+#line 46 "c:\\Github\\Geekble-Electric_Chair_sub\\light_control.ino"
+void LightMode(int neo_code, int color_code, int mode);
 #line 2 "c:\\Github\\Geekble-Electric_Chair_sub\\serial.ino"
 void SerialInit();
 #line 5 "c:\\Github\\Geekble-Electric_Chair_sub\\serial.ino"
 void Serial_HandShake();
-#line 31 "c:\\Github\\Geekble-Electric_Chair_sub\\serial.ino"
+#line 33 "c:\\Github\\Geekble-Electric_Chair_sub\\serial.ino"
 void Serial_RestartCheck();
-#line 45 "c:\\Github\\Geekble-Electric_Chair_sub\\serial.ino"
+#line 47 "c:\\Github\\Geekble-Electric_Chair_sub\\serial.ino"
 void Serial_Read();
 #line 1 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
 void TimerInit();
 #line 12 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
 void BlinkTimerStart(int Neo, int NeoColor);
-#line 20 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
+#line 19 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
 void BlinkTimerFunc();
-#line 32 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
-void BlinkLedtagTimerFunc();
-#line 47 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
+#line 30 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
 void BlinkAllTimerFunc();
-#line 66 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
+#line 46 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
 void BreatheTimerStart(int Neo, int NeoColor);
-#line 72 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
+#line 52 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
 void BreatheTimerFunc();
-#line 82 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
+#line 66 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
 void ShockTimerFunc();
-#line 96 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
+#line 84 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
 void ConnTimerFunc();
 #line 15 "c:\\Github\\Geekble-Electric_Chair_sub\\Geekble-Electric_Chair_sub.ino"
 void setup(){
   Serial.begin(115200);
   Serial.println("===============TTGO INIT===============");
+  TimerInit();
+  NeopixelInit();
+  LightControl(WHITE, STATIC, STATIC, STATIC);
+  EsInit();
   Serial_HandShake();
-  // TimerInit();
-  // NeopixelInit();
-  // LedInit();
-  // LightControl(RED, STATIC, STATIC, STATIC);
-  // EsInit();
-  Serial.println("===============TTGO INITALIZED===============");
+  Serial.println("===============TTGO INITALIZED======== =======");
 }
 
 void loop(){
-  Serial_RestartCheck();
-  // ShockTimer.run();
-  // BlinkTimer.run();
-  // BreatheTimer.run();
-  delay(1000);
+  Serial_Read();
+  ShockTimer.run();
+  BlinkTimer.run();
+  BreatheTimer.run();
 }
 #line 1 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
 //****************************************ES SETUP****************************************
@@ -102,11 +92,12 @@ void EsInit(){
 
 void EsOn(bool tf){
   if(tf == true){
-    Serial.println("ES!!!");
+    Serial.println("Es On");
     digitalWrite(ES_PIN, HIGH);
     IsEsOn = true;
   }
   else{
+    Serial.println("Es Off");
     digitalWrite(ES_PIN, LOW);
     IsEsOn = false;
   }
@@ -114,11 +105,12 @@ void EsOn(bool tf){
 
 //****************************************ES Stage****************************************
 void ES_Stage(int stage){
+  Serial.print("ES STAGE" + (String)(stage) + " START :: ");
   switch (stage){
   case 1:
     ES_Control(1,3);
     ES_Control(4,8);
-    ES_Loop_Confirm(2);
+    ES_Loop_Confirm(1);
     break;
   case 2:
     ES_Control(1,3);
@@ -148,15 +140,17 @@ void ES_Control(int start_point, int end_point){    // ES 정보입력 (시점, 
 }
 
 void ES_Loop_Confirm(int loop_num){                 // ES 입력정보 적용
+  loop_num --;
   if(loop_num < 1)    loop_num = 0;
-  int loop_end = EsArr_cnt/2;
-  for(int i=0; i<loop_num * loop_end; i++){
-    ES_Control(EsArr[i],EsArr[i+1]);
+
+  int loop_end = EsArr[EsArr_cnt-1];
+  for(int i=0; i<loop_num * loop_end; i+=2){
+    ES_Control(EsArr[i]+loop_end, EsArr[i+1]+loop_end);
     if(EsArr_cnt > EsArr_max)  goto ES_START;
   }
   ES_START:
   ES_Print();
-  shock_end = EsArr_cnt; 
+  shock_end = EsArr[EsArr_cnt-1]; 
   EsArr_cnt = 0;
   shock_cnt = 0;
   shock_arr = 0;
@@ -166,9 +160,16 @@ void ES_Loop_Confirm(int loop_num){                 // ES 입력정보 적용
 
 void ES_Print(){
   String EsData;
-  for(int i; i<EsArr_cnt; i++)
-    EsData += EsArr[i];
-  Serial.println(EsData);
+  for(int i=0; i<EsArr_cnt; i++){
+    EsData += EsArr[i]; 
+    if((i%2) == 1) 
+      EsData += "/";
+    else
+      EsData += " ";
+  }
+  Serial.print("#EsData : " + EsData);
+  Serial.print(" #ShockEnd : " + (String)(shock_end));
+  Serial.println("");
 }
 #line 1 "c:\\Github\\Geekble-Electric_Chair_sub\\light_control.ino"
 //****************************************Neopixel SETUP****************************************
@@ -185,142 +186,56 @@ void AllNeoColor(int color_code){
   }
 }
 
-void NeoBlink(int neo_code, int color_code){
-  for(int n=0; n<blink_num; n++){
-    if(neo_code == ALLNEO){
-      AllNeoColor(BLACK);
-      delay(blink_time);
-      AllNeoColor(color_code);
-      delay(blink_time);
-    }
-    else{
-      pixels[neo_code].lightColor(color[BLACK]);
-      delay(blink_time);
-      pixels[neo_code].lightColor(color[color_code]);
-      delay(blink_time);
-    }
-  }
-}
-
-//****************************************Led SETUP****************************************
-void LedInit(){
-  Serial.println("LedInit");
-  pinMode(LED_R, OUTPUT);
-  pinMode(LED_G, OUTPUT);
-  pinMode(LED_B, OUTPUT);
-}
-
-void LedColor(int color_code){
-  switch(color_code){
-    case RED:
-      digitalWrite(LED_R, HIGH);
-      digitalWrite(LED_G, LOW);
-      digitalWrite(LED_B, LOW);
-      break;
-    case GREEN:
-      digitalWrite(LED_R, LOW);
-      digitalWrite(LED_G, HIGH);
-      digitalWrite(LED_B, LOW);
-      break;
-    case BLUE:
-      digitalWrite(LED_R, LOW);
-      digitalWrite(LED_G, LOW);
-      digitalWrite(LED_B, HIGH);
-      break;
-    case YELLOW:
-      digitalWrite(LED_R, HIGH);
-      digitalWrite(LED_G, HIGH);
-      digitalWrite(LED_B, LOW);
-      break;
-    case PURPLE:
-      digitalWrite(LED_R, HIGH);
-      digitalWrite(LED_G, LOW);
-      digitalWrite(LED_B, HIGH);
-      break;
-    case WHITE:
-      digitalWrite(LED_R, HIGH);
-      digitalWrite(LED_G, HIGH);
-      digitalWrite(LED_B, HIGH);
-      break;
-    case BLACK:
-    default:
-      digitalWrite(LED_R, LOW);
-      digitalWrite(LED_G, LOW);
-      digitalWrite(LED_B, LOW);
-      break;
-  }
-}
-
-void LedBlink(int color_code){
-  for(int n=0; n<blink_num; n++){
-    LedColor(BLACK);
-    delay(blink_time);
-    LedColor(color_code);
-    delay(blink_time);
-  }
+void NeoRise(int neo_code, int color_code, int step, int step_cnt){
+  int step_neonum = NumPixels[neo_code]/step;
+  int first_step = step_neonum + NumPixels[neo_code]%step;
+  if(step_cnt > step)  step_cnt = step;
+  pixels[neo_code].lightColor(color[BLACK]);
+  pixels[neo_code].lightColor(color[color_code], first_step + step_cnt*step_neonum);
 }
 
 //****************************************Light Control****************************************
-void LightControl(int color_code, int led_mode, int tag_mode, int bot_mode){
-  int sum = led_mode + tag_mode + bot_mode;
+void LightControl(int color_code, int top_mode, int tag_mode, int bot_mode){
+  int blink_num = 0;
+  if(top_mode == BLINK)   blink_num++;
+  if(tag_mode == BLINK)   blink_num++;
+  if(bot_mode == BLINK)   blink_num++;
 
-  LightMode(LED, color_code, led_mode);
-  if(sum < BLINK*2){
+  if(blink_num <= 1){
+    LightMode(TOP, color_code, top_mode);
     LightMode(TAG, color_code, tag_mode);
     LightMode(BOT, color_code, bot_mode);
   }
-  else if(sum >= BLINK*2){
+  else if(blink_num == 2){
     BlinkTimer.deleteTimer(BlinkTimerId);
     BlinkTimerStart(LEDTAG, color_code);
     LightMode(BOT, color_code, bot_mode);
   }
-  else if(sum >= BLINK*3){
+  else if(blink_num == 3){
     BlinkTimer.deleteTimer(BlinkTimerId);
     BlinkTimerStart(ALLNEO, color_code);
   }
 }
 
-void LightMode(int light_code, int color_code, int mode){
-  if(light_code == LED){
-    Serial.print("LED Mode : ");
-    switch(mode){
-      case STATIC:
-        LedColor(color_code);
-        Serial.print("static");
-        break;
-      case BLINK:
-        LedBlink(color_code);
-        Serial.print("blink");
-        break;
-      case BREATHE: // LED는 숨쉬기 모드가 없다
-      default:
-        LedColor(BLACK);
-        Serial.print("off");
-        break;
-    }
-  }
-  else{
-    Serial.print(" NEO Mode : ");
-    switch(mode){
-      case STATIC:
-        pixels[light_code].lightColor(color[color_code]);
-        Serial.print("static");
-        break;
-      case BLINK:
-        Serial.print("blink");
-        BlinkTimer.deleteTimer(BlinkTimerId);
-        BlinkTimerStart(light_code, color_code);
-        break;
-      case BREATHE:
-        Serial.print("breathe");
-        BreatheTimer.deleteTimer(BreatheTimerId);
-        BreatheTimerStart(light_code, color_code);
-        break;
-      default:
-        Serial.print("off");
-        pixels[light_code].lightColor(color[BLACK]);
-        break;
-    }
+void LightMode(int neo_code, int color_code, int mode){
+  switch(mode){
+    case STATIC:
+      pixels[neo_code].lightColor(color[color_code]);
+      break;
+    case BLINK:
+      BlinkTimer.deleteTimer(BlinkTimerId);
+      BlinkTimerStart(neo_code, color_code);
+      break;
+    case BREATHE:
+      BreatheTimer.deleteTimer(BreatheTimerId);
+      BreatheTimerStart(neo_code, color_code);
+      break;
+    case RISE:
+      NeoRise(neo_code, color_code, 6, 0);
+      break;
+    default:
+      pixels[neo_code].lightColor(color[BLACK]);
+      break;
   }
 }
 #line 1 "c:\\Github\\Geekble-Electric_Chair_sub\\serial.ino"
@@ -340,10 +255,12 @@ void Serial_HandShake(){
     if(recv_data == "connect"){
       Serial.println("recv CONNECT");
       subTTGO.print("ok ");
+      LightControl(BLUE, STATIC, STATIC, STATIC);
       goto RECONNECT_TTGO;
     }
     else if(recv_data == "ok"){
       Serial.println("TTGO CONNECTED");
+      LightControl(PURPLE, STATIC, STATIC, STATIC);
     }
     else{
       Serial.println("from main : " + recv_data);
@@ -369,13 +286,11 @@ void Serial_RestartCheck(){
 }
 
 void Serial_Read(){
-  Serial.print("0");
   if(subTTGO.available()){
     String recv_data = subTTGO.readStringUntil(' ');
+    Serial.println("from main : " + recv_data);
     if(recv_data == "connect"){
       subTTGO.print("ok ");
-      LightControl(PURPLE, STATIC, STATIC, STATIC);
-      Serial.println("from main : " + recv_data);
     }
     else if(recv_data == "setting")         LightControl(WHITE,  STATIC, STATIC, STATIC);
     else if(recv_data == "ready")       		LightControl(RED,    STATIC, STATIC, BREATHE);
@@ -413,12 +328,10 @@ void BlinkTimerStart(int Neo, int NeoColor){
     blink_neo = Neo;
     blink_color = NeoColor;
     if(Neo == ALLNEO)   BlinkTimerId = BlinkTimer.setInterval(BlinkTime,BlinkAllTimerFunc);
-    if(Neo == LEDTAG)   BlinkTimerId = BlinkTimer.setInterval(BlinkTime,BlinkLedtagTimerFunc);
     else                BlinkTimerId = BlinkTimer.setInterval(BlinkTime,BlinkTimerFunc);
 }
 
 void BlinkTimerFunc(){
-    Serial.println("Blink!");
     if(blink_on == true){
         pixels[blink_neo].lightColor(color[blink_color]);
         blink_on = false;
@@ -429,32 +342,14 @@ void BlinkTimerFunc(){
     }
 }
 
-void BlinkLedtagTimerFunc(){
-    Serial.println("LED TAG Blink!");
-    if(blink_on == true){
-        LedColor(blink_color);
-        pixels[TAG].lightColor(color[blink_color]);
-        blink_on = false;
-    }
-    else{
-        LedColor(BLACK);
-        pixels[TAG].lightColor(color[BLACK]);
-        blink_on = true;
-    }
-}
-
-
 void BlinkAllTimerFunc(){
-    Serial.println("ALL Blink!");
     if(blink_on == true){
-        LedColor(blink_color);
         for(int i=0; i<NeoNum; i++){
             pixels[i].lightColor(color[blink_color]);
         }
         blink_on = false;
     }
     else{
-        LedColor(BLACK);
         for(int i=0; i<NeoNum; i++){
             pixels[i].lightColor(color[BLACK]);
         }
@@ -476,23 +371,30 @@ void BreatheTimerFunc(){
     }
     pixels[breathe_neo].lightColor(breathe_color_arr);
     breathe_step ++;
+    // if(breathe_step >= breathe_step_max)
+    //    breathe_step ++;
+    // else 
+    //    breathe_step --;
 }
 
 //****************************************Shock Timer****************************************
 void ShockTimerFunc(){
-    if(shock_cnt == shock_end){
-        ShockTimer.deleteTimer(ShockTimerId);
-        shock_end = 0;
-    }
-    else if(shock_cnt == EsArr[shock_arr]){
-        if((shock_arr%2) == 0)  digitalWrite(ES_PIN, HIGH);
-        else                    digitalWrite(ES_PIN, LOW);
+    Serial.print("CNT:" + (String)(shock_cnt) + " ");
+
+    if(shock_cnt == EsArr[shock_arr]){
+        if((shock_arr%2) == 0)  EsOn(true);
+        else                    EsOn(false);
         shock_arr++;
+    }
+    if(shock_cnt == shock_end){
+        Serial.println("ES KILL");
+        ShockTimer.deleteTimer(ShockTimerId);
+        EsOn(false);
+        shock_end = 0;
     }
     shock_cnt++;
 }
 
 //****************************************Connect Timer****************************************
 void ConnTimerFunc(){
-
 }

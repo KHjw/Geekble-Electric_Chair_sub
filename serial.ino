@@ -14,10 +14,12 @@ void Serial_HandShake(){
     if(recv_data == "connect"){
       Serial.println("recv CONNECT");
       subTTGO.print("ok ");
+      LightControl(BLUE, STATIC, STATIC, STATIC);
       goto RECONNECT_TTGO;
     }
     else if(recv_data == "ok"){
       Serial.println("TTGO CONNECTED");
+      LightControl(PURPLE, STATIC, STATIC, STATIC);
     }
     else{
       Serial.println("from main : " + recv_data);
@@ -43,13 +45,11 @@ void Serial_RestartCheck(){
 }
 
 void Serial_Read(){
-  Serial.print("0");
   if(subTTGO.available()){
     String recv_data = subTTGO.readStringUntil(' ');
+    Serial.println("from main : " + recv_data);
     if(recv_data == "connect"){
       subTTGO.print("ok ");
-      LightControl(PURPLE, STATIC, STATIC, STATIC);
-      Serial.println("from main : " + recv_data);
     }
     else if(recv_data == "setting")         LightControl(WHITE,  STATIC, STATIC, STATIC);
     else if(recv_data == "ready")       		LightControl(RED,    STATIC, STATIC, BREATHE);

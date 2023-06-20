@@ -15,19 +15,17 @@
 void setup(){
   Serial.begin(115200);
   Serial.println("===============TTGO INIT===============");
+  TimerInit();
+  NeopixelInit();
+  LightControl(WHITE, STATIC, STATIC, STATIC);
+  EsInit();
   Serial_HandShake();
-  // TimerInit();
-  // NeopixelInit();
-  // LedInit();
-  // LightControl(RED, STATIC, STATIC, STATIC);
-  // EsInit();
-  Serial.println("===============TTGO INITALIZED===============");
+  Serial.println("===============TTGO INITALIZED======== =======");
 }
 
 void loop(){
-  Serial_RestartCheck();
-  // ShockTimer.run();
-  // BlinkTimer.run();
-  // BreatheTimer.run();
-  delay(1000);
+  Serial_Read();
+  ShockTimer.run();
+  BlinkTimer.run();
+  BreatheTimer.run();
 }

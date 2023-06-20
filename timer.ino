@@ -13,12 +13,10 @@ void BlinkTimerStart(int Neo, int NeoColor){
     blink_neo = Neo;
     blink_color = NeoColor;
     if(Neo == ALLNEO)   BlinkTimerId = BlinkTimer.setInterval(BlinkTime,BlinkAllTimerFunc);
-    if(Neo == LEDTAG)   BlinkTimerId = BlinkTimer.setInterval(BlinkTime,BlinkLedtagTimerFunc);
     else                BlinkTimerId = BlinkTimer.setInterval(BlinkTime,BlinkTimerFunc);
 }
 
 void BlinkTimerFunc(){
-    Serial.println("Blink!");
     if(blink_on == true){
         pixels[blink_neo].lightColor(color[blink_color]);
         blink_on = false;
@@ -29,32 +27,14 @@ void BlinkTimerFunc(){
     }
 }
 
-void BlinkLedtagTimerFunc(){
-    Serial.println("LED TAG Blink!");
-    if(blink_on == true){
-        LedColor(blink_color);
-        pixels[TAG].lightColor(color[blink_color]);
-        blink_on = false;
-    }
-    else{
-        LedColor(BLACK);
-        pixels[TAG].lightColor(color[BLACK]);
-        blink_on = true;
-    }
-}
-
-
 void BlinkAllTimerFunc(){
-    Serial.println("ALL Blink!");
     if(blink_on == true){
-        LedColor(blink_color);
         for(int i=0; i<NeoNum; i++){
             pixels[i].lightColor(color[blink_color]);
         }
         blink_on = false;
     }
     else{
-        LedColor(BLACK);
         for(int i=0; i<NeoNum; i++){
             pixels[i].lightColor(color[BLACK]);
         }
@@ -76,23 +56,30 @@ void BreatheTimerFunc(){
     }
     pixels[breathe_neo].lightColor(breathe_color_arr);
     breathe_step ++;
+    // if(breathe_step >= breathe_step_max)
+    //    breathe_step ++;
+    // else 
+    //    breathe_step --;
 }
 
 //****************************************Shock Timer****************************************
 void ShockTimerFunc(){
-    if(shock_cnt == shock_end){
-        ShockTimer.deleteTimer(ShockTimerId);
-        shock_end = 0;
-    }
-    else if(shock_cnt == EsArr[shock_arr]){
-        if((shock_arr%2) == 0)  digitalWrite(ES_PIN, HIGH);
-        else                    digitalWrite(ES_PIN, LOW);
+    Serial.print("CNT:" + (String)(shock_cnt) + " ");
+
+    if(shock_cnt == EsArr[shock_arr]){
+        if((shock_arr%2) == 0)  EsOn(true);
+        else                    EsOn(false);
         shock_arr++;
+    }
+    if(shock_cnt == shock_end){
+        Serial.println("ES KILL");
+        ShockTimer.deleteTimer(ShockTimerId);
+        EsOn(false);
+        shock_end = 0;
     }
     shock_cnt++;
 }
 
 //****************************************Connect Timer****************************************
 void ConnTimerFunc(){
-
 }
