@@ -6,18 +6,18 @@
 #include <Adafruit_NeoPixel.h>
 #include <SimpleTimer.h>
 #include <HardwareSerial.h>
+#include <DFRobotDFPlayerMini.h>
 
 #define SUBTTGO_RX_PIN  18
 #define SUBTTGO_TX_PIN  19
 
-#define DFP_1           12
-#define DFP_2           13
-#define DFP_3           18
+#define DFP_RX          12
+#define DFP_TX          13
 
 #define NEO_TOP         25
 #define	NEO_TAG			26
 #define NEO_BOT			27
 
-#define ES_PIN          15
+#define ES_PIN          33
 
 #endif

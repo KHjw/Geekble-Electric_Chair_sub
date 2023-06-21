@@ -20,6 +20,7 @@ void EsOn(bool tf){
 
 //****************************************ES Stage****************************************
 void ES_Stage(int stage){
+  EsStage = stage;
   Serial.print("ES STAGE" + (String)(stage) + " START :: ");
   switch (stage){
   case 1:

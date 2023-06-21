@@ -54,9 +54,12 @@ void Serial_Read(){
     else if(recv_data == "setting")         LightControl(WHITE,  STATIC, STATIC, STATIC);
     else if(recv_data == "ready")       		LightControl(RED,    STATIC, STATIC, BREATHE);
     else if(recv_data == "activate_wait")   LightControl(YELLOW, STATIC, STATIC, BREATHE);
-    else if(recv_data == "activate_t1")		  LightControl(GREEN,  STATIC, STATIC, BREATHE);
-    else if(recv_data == "activate_t2") 		LightControl(GREEN,  BLINK,  BLINK,  BREATHE);
-    else if(recv_data == "activate_t3") 		LightControl(BLUE,	 STATIC, STATIC, BREATHE);
+    else if(recv_data == "activate_t1")		 {LightControl(GREEN,  STATIC, STATIC, BREATHE);
+                                            DFPlayer.playLargeFolder(1,1);}
+    else if(recv_data == "activate_t2") 	 {LightControl(GREEN,  BLINK,  BLINK,  BREATHE);
+                                            DFPlayer.playLargeFolder(1,1);}
+    else if(recv_data == "activate_t3") 	 {LightControl(BLUE,	 STATIC, STATIC, BREATHE);
+                                            DFPlayer.playLargeFolder(1,1);}
     else if(recv_data == "stage1")     		 {LightControl(BLUE,   STATIC, STATIC, BREATHE);
                                             ES_Stage(1);}
     else if(recv_data == "stage2")     		 {LightControl(BLUE,   STATIC, STATIC, BREATHE);
@@ -65,8 +68,16 @@ void Serial_Read(){
                                             ES_Stage(3);}
     else if(recv_data == "cool")						LightControl(RED,    STATIC, STATIC, BREATHE);
     else if(recv_data == "rescue")					LightControl(GREEN,  STATIC, BLINK,  RISE);
-    else if(recv_data == "rescue_suc")			LightControl(GREEN,  STATIC, STATIC, STATIC);
-    else if(recv_data == "rescue_fail")		  LightControl(RED,    BLINK,  BLINK,  BLINK);
+    else if(recv_data == "rescue_suc")		 {AllNeoBlink(GREEN, 4, 500);
+                                            LightControl(RED,    STATIC, STATIC, BREATHE);}
+    else if(recv_data == "rescue_fail")		  AllNeoBlink(RED, 5, 250);
+    else if(recv_data == "shock"){
+      if(EsStage == 1)          DFPlayer.playLargeFolder(2, 1);
+      else if(EsStage == 2)     DFPlayer.playLargeFolder(2, 2);
+      else if(EsStage == 3)     DFPlayer.playLargeFolder(2, 3);
+      else                      DFPlayer.pause();
+    }
+
     else                                    Serial.println("from main : " + recv_data);
     last_recv = recv_data;
   }

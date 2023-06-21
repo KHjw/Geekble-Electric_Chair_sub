@@ -21,6 +21,11 @@
   },
   {
     "Sourcefile": "c:\\Github\\Geekble-Electric_Chair_sub\\ArduinoOutput\\sketch\\Geekble-Electric_Chair_sub.ino.cpp",
+    "Include": "DFRobotDFPlayerMini.h",
+    "Includepath": "C:\\Users\\kevin\\OneDrive\\문서\\Arduino\\libraries\\DFRobotDFPlayerMini-master"
+  },
+  {
+    "Sourcefile": "c:\\Github\\Geekble-Electric_Chair_sub\\ArduinoOutput\\sketch\\Geekble-Electric_Chair_sub.ino.cpp",
     "Include": "",
     "Includepath": null
   },
@@ -51,6 +56,11 @@
   },
   {
     "Sourcefile": "C:\\Users\\kevin\\OneDrive\\문서\\Arduino\\libraries\\SimpleTimer\\SimpleTimer.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\kevin\\OneDrive\\문서\\Arduino\\libraries\\DFRobotDFPlayerMini-master\\DFRobotDFPlayerMini.cpp",
     "Include": "",
     "Includepath": null
   }

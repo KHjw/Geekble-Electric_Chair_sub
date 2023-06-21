@@ -16,29 +16,33 @@
 
 #line 15 "c:\\Github\\Geekble-Electric_Chair_sub\\Geekble-Electric_Chair_sub.ino"
 void setup();
-#line 26 "c:\\Github\\Geekble-Electric_Chair_sub\\Geekble-Electric_Chair_sub.ino"
+#line 28 "c:\\Github\\Geekble-Electric_Chair_sub\\Geekble-Electric_Chair_sub.ino"
 void loop();
+#line 1 "c:\\Github\\Geekble-Electric_Chair_sub\\dfplayer.ino"
+void DfpInit();
 #line 2 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
 void EsInit();
 #line 8 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
 void EsOn(bool tf);
 #line 22 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
 void ES_Stage(int stage);
-#line 50 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
+#line 51 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
 void ES_Control(int start_point, int end_point);
-#line 57 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
+#line 58 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
 void ES_Loop_Confirm(int loop_num);
-#line 76 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
+#line 77 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
 void ES_Print();
 #line 2 "c:\\Github\\Geekble-Electric_Chair_sub\\light_control.ino"
 void NeopixelInit();
 #line 9 "c:\\Github\\Geekble-Electric_Chair_sub\\light_control.ino"
 void AllNeoColor(int color_code);
 #line 15 "c:\\Github\\Geekble-Electric_Chair_sub\\light_control.ino"
-void NeoRise(int neo_code, int color_code, int step, int step_cnt);
+void AllNeoBlink(int color_code, int blink_num, int blink_time);
 #line 24 "c:\\Github\\Geekble-Electric_Chair_sub\\light_control.ino"
+void NeoRise(int neo_code, int color_code, int step, int step_cnt);
+#line 33 "c:\\Github\\Geekble-Electric_Chair_sub\\light_control.ino"
 void LightControl(int color_code, int top_mode, int tag_mode, int bot_mode);
-#line 46 "c:\\Github\\Geekble-Electric_Chair_sub\\light_control.ino"
+#line 56 "c:\\Github\\Geekble-Electric_Chair_sub\\light_control.ino"
 void LightMode(int neo_code, int color_code, int mode);
 #line 2 "c:\\Github\\Geekble-Electric_Chair_sub\\serial.ino"
 void SerialInit();
@@ -72,8 +76,10 @@ void setup(){
   NeopixelInit();
   LightControl(WHITE, STATIC, STATIC, STATIC);
   EsInit();
-  Serial_HandShake();
-  Serial.println("===============TTGO INITALIZED======== =======");
+  // Serial_HandShake();
+  DfpInit();
+  DFPlayer.loopFolder(2);
+  Serial.println("===============TTGO INITALIZED===============");
 }
 
 void loop(){
@@ -81,6 +87,25 @@ void loop(){
   ShockTimer.run();
   BlinkTimer.run();
   BreatheTimer.run();
+}
+#line 1 "c:\\Github\\Geekble-Electric_Chair_sub\\dfplayer.ino"
+void DfpInit(){
+  DFPINIT:
+  serialDFP.begin(9600, SERIAL_8N1, DFP_RX, DFP_TX);
+  Serial.println();
+  Serial.println(F("DFRobot DFPlayer Mini Demo"));
+  Serial.println(F("Initializing DFPlayer ... (May take 3~5 seconds)"));
+  if(!DFPlayer.begin(serialDFP)){
+    Serial.println(F("Unable to begin:"));
+    Serial.println(F("1.Please recheck the connection!"));
+    Serial.println(F("2.Please insert the SD card!"));
+    goto DFPINIT;
+  }
+  Serial.println(F("DFPlayer Mini online."));
+
+  DFPlayer.volume(30);              // max 30
+  DFPlayer.EQ(DFPLAYER_EQ_NORMAL);
+  DFPlayer.outputDevice(DFPLAYER_DEVICE_SD);
 }
 #line 1 "c:\\Github\\Geekble-Electric_Chair_sub\\electric_shock.ino"
 //****************************************ES SETUP****************************************
@@ -105,6 +130,7 @@ void EsOn(bool tf){
 
 //****************************************ES Stage****************************************
 void ES_Stage(int stage){
+  EsStage = stage;
   Serial.print("ES STAGE" + (String)(stage) + " START :: ");
   switch (stage){
   case 1:
@@ -186,6 +212,15 @@ void AllNeoColor(int color_code){
   }
 }
 
+void AllNeoBlink(int color_code, int blink_num, int blink_time){
+  for(int n=0; n<blink_num; n++){
+    AllNeoColor(BLACK);
+    delay(blink_time);
+    AllNeoColor(color_code);
+    delay(blink_time);
+  }
+}
+
 void NeoRise(int neo_code, int color_code, int step, int step_cnt){
   int step_neonum = NumPixels[neo_code]/step;
   int first_step = step_neonum + NumPixels[neo_code]%step;
@@ -201,18 +236,19 @@ void LightControl(int color_code, int top_mode, int tag_mode, int bot_mode){
   if(tag_mode == BLINK)   blink_num++;
   if(bot_mode == BLINK)   blink_num++;
 
+  BreatheTimer.deleteTimer(BreatheTimerId);
+  BlinkTimer.deleteTimer(BlinkTimerId);
+
   if(blink_num <= 1){
     LightMode(TOP, color_code, top_mode);
     LightMode(TAG, color_code, tag_mode);
     LightMode(BOT, color_code, bot_mode);
   }
   else if(blink_num == 2){
-    BlinkTimer.deleteTimer(BlinkTimerId);
     BlinkTimerStart(LEDTAG, color_code);
     LightMode(BOT, color_code, bot_mode);
   }
   else if(blink_num == 3){
-    BlinkTimer.deleteTimer(BlinkTimerId);
     BlinkTimerStart(ALLNEO, color_code);
   }
 }
@@ -223,11 +259,9 @@ void LightMode(int neo_code, int color_code, int mode){
       pixels[neo_code].lightColor(color[color_code]);
       break;
     case BLINK:
-      BlinkTimer.deleteTimer(BlinkTimerId);
       BlinkTimerStart(neo_code, color_code);
       break;
     case BREATHE:
-      BreatheTimer.deleteTimer(BreatheTimerId);
       BreatheTimerStart(neo_code, color_code);
       break;
     case RISE:
@@ -295,9 +329,12 @@ void Serial_Read(){
     else if(recv_data == "setting")         LightControl(WHITE,  STATIC, STATIC, STATIC);
     else if(recv_data == "ready")       		LightControl(RED,    STATIC, STATIC, BREATHE);
     else if(recv_data == "activate_wait")   LightControl(YELLOW, STATIC, STATIC, BREATHE);
-    else if(recv_data == "activate_t1")		  LightControl(GREEN,  STATIC, STATIC, BREATHE);
-    else if(recv_data == "activate_t2") 		LightControl(GREEN,  BLINK,  BLINK,  BREATHE);
-    else if(recv_data == "activate_t3") 		LightControl(BLUE,	 STATIC, STATIC, BREATHE);
+    else if(recv_data == "activate_t1")		 {LightControl(GREEN,  STATIC, STATIC, BREATHE);
+                                            DFPlayer.playLargeFolder(1,1);}
+    else if(recv_data == "activate_t2") 	 {LightControl(GREEN,  BLINK,  BLINK,  BREATHE);
+                                            DFPlayer.playLargeFolder(1,1);}
+    else if(recv_data == "activate_t3") 	 {LightControl(BLUE,	 STATIC, STATIC, BREATHE);
+                                            DFPlayer.playLargeFolder(1,1);}
     else if(recv_data == "stage1")     		 {LightControl(BLUE,   STATIC, STATIC, BREATHE);
                                             ES_Stage(1);}
     else if(recv_data == "stage2")     		 {LightControl(BLUE,   STATIC, STATIC, BREATHE);
@@ -306,8 +343,16 @@ void Serial_Read(){
                                             ES_Stage(3);}
     else if(recv_data == "cool")						LightControl(RED,    STATIC, STATIC, BREATHE);
     else if(recv_data == "rescue")					LightControl(GREEN,  STATIC, BLINK,  RISE);
-    else if(recv_data == "rescue_suc")			LightControl(GREEN,  STATIC, STATIC, STATIC);
-    else if(recv_data == "rescue_fail")		  LightControl(RED,    BLINK,  BLINK,  BLINK);
+    else if(recv_data == "rescue_suc")		 {AllNeoBlink(GREEN, 4, 500);
+                                            LightControl(RED,    STATIC, STATIC, BREATHE);}
+    else if(recv_data == "rescue_fail")		  AllNeoBlink(RED, 5, 250);
+    else if(recv_data == "shock"){
+      if(EsStage == 1)          DFPlayer.playLargeFolder(2, 1);
+      else if(EsStage == 2)     DFPlayer.playLargeFolder(2, 2);
+      else if(EsStage == 3)     DFPlayer.playLargeFolder(2, 3);
+      else                      DFPlayer.pause();
+    }
+
     else                                    Serial.println("from main : " + recv_data);
     last_recv = recv_data;
   }

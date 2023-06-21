@@ -132,4 +132,5 @@ c:\Github\Geekble-Electric_Chair_sub\ArduinoOutput\sketch\Geekble-Electric_Chair
  c:\Github\Geekble-Electric_Chair_sub\ArduinoOutput\sketch\Library_and_pin.h \
  C:\Users\kevin\OneDrive\문서\Arduino\libraries\Adafruit_NeoPixel/Adafruit_NeoPixel.h \
  C:\Users\kevin\OneDrive\문서\Arduino\libraries\SimpleTimer/SimpleTimer.h \
- C:\Users\kevin\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.4\cores\esp32/HardwareSerial.h
+ C:\Users\kevin\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.4\cores\esp32/HardwareSerial.h \
+ C:\Users\kevin\OneDrive\문서\Arduino\libraries\DFRobotDFPlayerMini-master/DFRobotDFPlayerMini.h

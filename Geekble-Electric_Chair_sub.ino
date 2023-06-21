@@ -19,8 +19,10 @@ void setup(){
   NeopixelInit();
   LightControl(WHITE, STATIC, STATIC, STATIC);
   EsInit();
-  Serial_HandShake();
-  Serial.println("===============TTGO INITALIZED======== =======");
+  // Serial_HandShake();
+  DfpInit();
+  DFPlayer.loopFolder(2);
+  Serial.println("===============TTGO INITALIZED===============");
 }
 
 void loop(){

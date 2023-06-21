@@ -4,18 +4,6 @@
 
 #include "Library_and_pin.h"
 
-//****************************************Serial SETUP****************************************
-HardwareSerial subTTGO(1);
-
-void Serial_HandShake();
-void Serial_RestartCheck();
-
-String last_recv;
-
-void SerialInit();
-void Serial_Read();
-void Serial_Control(String recv_data);
-
 //****************************************SimpleTimer SETUP****************************************
 SimpleTimer BlinkTimer;
 SimpleTimer ShockTimer;
@@ -68,7 +56,7 @@ void AllNeoColor(int color_code);
 void NeoRise(int neo_code, int color_code, int step, int step_cnt);
 
 const int NeoNum = 3;
-const int NumPixels[3] = {120,12,250};
+const int NumPixels[3] = {120,12,150};
 
 enum {TOP = 0, TAG, BOT, LED, LEDTAG, ALLNEO};   // led_code
 Adafruit_NeoPixel pixels[3] = {Adafruit_NeoPixel(NumPixels[TOP], NEO_TOP, NEO_GRB + NEO_KHZ800),
@@ -100,9 +88,28 @@ void ES_Control(int start_point, int end_point);
 void ES_Loop_Confirm(int loop_num);
 void ES_Print();
 
+int EsStage = 0;
 int EsArr[60] = {0};
 int EsArr_max = 60;
 int EsArr_cnt = 0;
 bool IsEsOn = false;
+
+//****************************************DFPlayer SETUP****************************************
+HardwareSerial serialDFP(2);
+DFRobotDFPlayerMini DFPlayer;
+
+void DfpInit();
+
+//****************************************Serial SETUP****************************************
+HardwareSerial subTTGO(1);
+
+void Serial_HandShake();
+void Serial_RestartCheck();
+
+String last_recv;
+
+void SerialInit();
+void Serial_Read();
+void Serial_Control(String recv_data);
 
 #endif
