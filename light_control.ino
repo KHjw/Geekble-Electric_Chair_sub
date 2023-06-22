@@ -20,15 +20,6 @@ void AllNeoBlink(int color_code, int blink_num, int blink_time){
     delay(blink_time);
   }
 }
-
-void NeoRise(int neo_code, int color_code, int step, int step_cnt){
-  int step_neonum = NumPixels[neo_code]/step;
-  int first_step = step_neonum + NumPixels[neo_code]%step;
-  if(step_cnt > step)  step_cnt = step;
-  pixels[neo_code].lightColor(color[BLACK]);
-  pixels[neo_code].lightColor(color[color_code], first_step + step_cnt*step_neonum);
-}
-
 //****************************************Light Control****************************************
 void LightControl(int color_code, int top_mode, int tag_mode, int bot_mode){
   int blink_num = 0;
@@ -38,6 +29,11 @@ void LightControl(int color_code, int top_mode, int tag_mode, int bot_mode){
 
   BreatheTimer.deleteTimer(BreatheTimerId);
   BlinkTimer.deleteTimer(BlinkTimerId);
+  RiseTimer.deleteTimer(RiseTimerId);
+
+  if(top_mode != STATIC)    EffectTimer.deleteTimer(EffectTimerId);
+  else    EffectTimerStart(color_code);
+  
 
   if(blink_num <= 1){
     LightMode(TOP, color_code, top_mode);
@@ -45,7 +41,7 @@ void LightControl(int color_code, int top_mode, int tag_mode, int bot_mode){
     LightMode(BOT, color_code, bot_mode);
   }
   else if(blink_num == 2){
-    BlinkTimerStart(LEDTAG, color_code);
+    BlinkTimerStart(TOPTAG, color_code);
     LightMode(BOT, color_code, bot_mode);
   }
   else if(blink_num == 3){
@@ -65,7 +61,7 @@ void LightMode(int neo_code, int color_code, int mode){
       BreatheTimerStart(neo_code, color_code);
       break;
     case RISE:
-      NeoRise(neo_code, color_code, 6, 0);
+      RiseTimerStart(color_code, 5);
       break;
     default:
       pixels[neo_code].lightColor(color[BLACK]);

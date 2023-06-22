@@ -20,22 +20,22 @@ void EsOn(bool tf){
 
 //****************************************ES Stage****************************************
 void ES_Stage(int stage){
-  EsStage = stage;
   Serial.print("ES STAGE" + (String)(stage) + " START :: ");
   switch (stage){
   case 1:
     ES_Control(1,3);
     ES_Control(4,8);
-    ES_Loop_Confirm(1);
+    ES_Loop_Confirm(4);
     break;
   case 2:
-    ES_Control(1,3);
-    ES_Control(4,8);
+    ES_Control(2,6);
+    ES_Control(7,8);
     ES_Loop_Confirm(4);
     break;
   case 3:
-    ES_Control(1,2);
-    ES_Control(3,5);
+    ES_Control(2,6);
+    ES_Control(7,8);
+    ES_Control(9,10);
     ES_Loop_Confirm(4);
     break;
   case 10:

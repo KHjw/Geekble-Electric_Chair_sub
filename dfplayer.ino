@@ -8,11 +8,12 @@ void DfpInit(){
     Serial.println(F("Unable to begin:"));
     Serial.println(F("1.Please recheck the connection!"));
     Serial.println(F("2.Please insert the SD card!"));
+    delay(500);
     goto DFPINIT;
   }
   Serial.println(F("DFPlayer Mini online."));
 
-  DFPlayer.volume(30);              // max 30
+  DFPlayer.volume(22);              // max 30
   DFPlayer.EQ(DFPLAYER_EQ_NORMAL);
   DFPlayer.outputDevice(DFPLAYER_DEVICE_SD);
 }

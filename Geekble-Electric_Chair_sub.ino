@@ -19,9 +19,8 @@ void setup(){
   NeopixelInit();
   LightControl(WHITE, STATIC, STATIC, STATIC);
   EsInit();
-  // Serial_HandShake();
+  Serial_HandShake();
   DfpInit();
-  DFPlayer.loopFolder(2);
   Serial.println("===============TTGO INITALIZED===============");
 }
 
@@ -30,4 +29,5 @@ void loop(){
   ShockTimer.run();
   BlinkTimer.run();
   BreatheTimer.run();
+  RiseTimer.run();
 }

@@ -30,9 +30,8 @@ void setup(){
   NeopixelInit();
   LightControl(WHITE, STATIC, STATIC, STATIC);
   EsInit();
-  // Serial_HandShake();
+  Serial_HandShake();
   DfpInit();
-  DFPlayer.loopFolder(2);
   Serial.println("===============TTGO INITALIZED===============");
 }
 
@@ -41,6 +40,7 @@ void loop(){
   ShockTimer.run();
   BlinkTimer.run();
   BreatheTimer.run();
+  RiseTimer.run();
 }
 # 1 "c:\\Github\\Geekble-Electric_Chair_sub\\dfplayer.ino"
 void DfpInit(){
@@ -53,11 +53,12 @@ void DfpInit(){
     Serial.println(((reinterpret_cast<const __FlashStringHelper *>(("Unable to begin:")))));
     Serial.println(((reinterpret_cast<const __FlashStringHelper *>(("1.Please recheck the connection!")))));
     Serial.println(((reinterpret_cast<const __FlashStringHelper *>(("2.Please insert the SD card!")))));
+    delay(500);
     goto DFPINIT;
   }
   Serial.println(((reinterpret_cast<const __FlashStringHelper *>(("DFPlayer Mini online.")))));
 
-  DFPlayer.volume(30); // max 30
+  DFPlayer.volume(22); // max 30
   DFPlayer.EQ(0);
   DFPlayer.outputDevice(2);
 }
@@ -65,41 +66,41 @@ void DfpInit(){
 //****************************************ES SETUP****************************************
 void EsInit(){
   Serial.println("EsInit");
-  pinMode(33, 0x03);
+  pinMode(15, 0x03);
   EsOn(false);
 }
 
 void EsOn(bool tf){
   if(tf == true){
     Serial.println("Es On");
-    digitalWrite(33, 0x1);
+    digitalWrite(15, 0x1);
     IsEsOn = true;
   }
   else{
     Serial.println("Es Off");
-    digitalWrite(33, 0x0);
+    digitalWrite(15, 0x0);
     IsEsOn = false;
   }
 }
 
 //****************************************ES Stage****************************************
 void ES_Stage(int stage){
-  EsStage = stage;
   Serial.print("ES STAGE" + (String)(stage) + " START :: ");
   switch (stage){
   case 1:
     ES_Control(1,3);
     ES_Control(4,8);
-    ES_Loop_Confirm(1);
+    ES_Loop_Confirm(4);
     break;
   case 2:
-    ES_Control(1,3);
-    ES_Control(4,8);
+    ES_Control(2,6);
+    ES_Control(7,8);
     ES_Loop_Confirm(4);
     break;
   case 3:
-    ES_Control(1,2);
-    ES_Control(3,5);
+    ES_Control(2,6);
+    ES_Control(7,8);
+    ES_Control(9,10);
     ES_Loop_Confirm(4);
     break;
   case 10:
@@ -174,15 +175,6 @@ void AllNeoBlink(int color_code, int blink_num, int blink_time){
     delay(blink_time);
   }
 }
-
-void NeoRise(int neo_code, int color_code, int step, int step_cnt){
-  int step_neonum = NumPixels[neo_code]/step;
-  int first_step = step_neonum + NumPixels[neo_code]%step;
-  if(step_cnt > step) step_cnt = step;
-  pixels[neo_code].lightColor(color[BLACK]);
-  pixels[neo_code].lightColor(color[color_code], first_step + step_cnt*step_neonum);
-}
-
 //****************************************Light Control****************************************
 void LightControl(int color_code, int top_mode, int tag_mode, int bot_mode){
   int blink_num = 0;
@@ -192,6 +184,11 @@ void LightControl(int color_code, int top_mode, int tag_mode, int bot_mode){
 
   BreatheTimer.deleteTimer(BreatheTimerId);
   BlinkTimer.deleteTimer(BlinkTimerId);
+  RiseTimer.deleteTimer(RiseTimerId);
+
+  if(top_mode != STATIC) EffectTimer.deleteTimer(EffectTimerId);
+  else EffectTimerStart(color_code);
+
 
   if(blink_num <= 1){
     LightMode(TOP, color_code, top_mode);
@@ -199,7 +196,7 @@ void LightControl(int color_code, int top_mode, int tag_mode, int bot_mode){
     LightMode(BOT, color_code, bot_mode);
   }
   else if(blink_num == 2){
-    BlinkTimerStart(LEDTAG, color_code);
+    BlinkTimerStart(TOPTAG, color_code);
     LightMode(BOT, color_code, bot_mode);
   }
   else if(blink_num == 3){
@@ -219,7 +216,7 @@ void LightMode(int neo_code, int color_code, int mode){
       BreatheTimerStart(neo_code, color_code);
       break;
     case RISE:
-      NeoRise(neo_code, color_code, 6, 0);
+      RiseTimerStart(color_code, 5);
       break;
     default:
       pixels[neo_code].lightColor(color[BLACK]);
@@ -228,35 +225,34 @@ void LightMode(int neo_code, int color_code, int mode){
 }
 # 1 "c:\\Github\\Geekble-Electric_Chair_sub\\serial.ino"
 //****************************************Serial Communication****************************************
-void SerialInit(){
-}
-
 void Serial_HandShake(){
   Serial.println("Serial Handshake Init");
   subTTGO.begin(9600, 0x800001c, 18, 19);
   RECONNECT_TTGO:
   delay(100);
   Serial.println("Connecting to TTGO");
-  subTTGO.print("connect ");
-  if(subTTGO.available()){
-    String recv_data = subTTGO.readStringUntil(' ');
-    if(recv_data == "connect"){
-      Serial.println("recv CONNECT");
-      subTTGO.print("ok ");
-      LightControl(BLUE, STATIC, STATIC, STATIC);
-      goto RECONNECT_TTGO;
+  SerialSend("connect");
+  if(subTTGO.read() == '@'){
+    if(subTTGO.available()){
+      String recv_data = subTTGO.readStringUntil(' ');
+      if(recv_data == "connect"){
+        Serial.println("recv CONNECT");
+        SerialSend("ok");
+        LightControl(BLUE, STATIC, STATIC, STATIC);
+        goto RECONNECT_TTGO;
+      }
+      else if(recv_data == "ok"){
+        Serial.println("TTGO CONNECTED");
+        LightControl(PURPLE, STATIC, STATIC, STATIC);
+      }
+      else{
+        Serial.println("from main : " + recv_data);
+        Serial.println("connection failed");
+        goto RECONNECT_TTGO;
+      }
     }
-    else if(recv_data == "ok"){
-      Serial.println("TTGO CONNECTED");
-      LightControl(PURPLE, STATIC, STATIC, STATIC);
-    }
-    else{
-      Serial.println("from main : " + recv_data);
-      Serial.println("connection failed");
-      goto RECONNECT_TTGO;
-    }
+    else goto RECONNECT_TTGO;
   }
-  else goto RECONNECT_TTGO;
 }
 
 void Serial_RestartCheck(){
@@ -264,7 +260,7 @@ void Serial_RestartCheck(){
   if(subTTGO.available()){
     String recv_data = subTTGO.readStringUntil(' ');
     if(recv_data == "connect"){
-      subTTGO.print("ok ");
+      SerialSend("ok");
       Serial.println("send CONNECT");
     }
     else
@@ -275,41 +271,45 @@ void Serial_RestartCheck(){
 
 void Serial_Read(){
   if(subTTGO.available()){
-    String recv_data = subTTGO.readStringUntil(' ');
-    Serial.println("from main : " + recv_data);
-    if(recv_data == "connect"){
-      subTTGO.print("ok ");
+    EsOn(false);
+    EsStage = 0;
+    if(subTTGO.read() == '@'){
+      String recv_data = subTTGO.readStringUntil(' ');
+      Serial.println("from main : " + recv_data);
+      if(recv_data == "connect"){
+        SerialSend("ok");
+      }
+      else if(recv_data == "setting") LightControl(WHITE, STATIC, STATIC, STATIC);
+      else if(recv_data == "ready") LightControl(RED, STATIC, STATIC, BREATHE);
+      else if(recv_data == "activate_wait") LightControl(YELLOW, STATIC, STATIC, BREATHE);
+      else if(recv_data == "activate_t1") {LightControl(GREEN, STATIC, STATIC, BREATHE);}
+      else if(recv_data == "activate_t2") {LightControl(GREEN, BLINK, BLINK, BREATHE);}
+      else if(recv_data == "activate_t3") {LightControl(BLUE, STATIC, STATIC, BREATHE);}
+      else if(recv_data == "stage1") {LightControl(BLUE, STATIC, STATIC, BREATHE); EsStage = 1; DFPlayer.playLargeFolder(2,1);}
+      else if(recv_data == "stage2") {LightControl(BLUE, STATIC, STATIC, BREATHE); EsStage = 2; DFPlayer.playLargeFolder(2,2);}
+      else if(recv_data == "stage3") {LightControl(BLUE, STATIC, STATIC, BREATHE); EsStage = 3; DFPlayer.playLargeFolder(2,3);}
+      else if(recv_data == "cool") LightControl(RED, STATIC, STATIC, BREATHE);
+      else if(recv_data == "rescue") LightControl(GREEN, STATIC, BLINK, RISE);
+      else if(recv_data == "rescue_suc") {AllNeoBlink(GREEN, 4, 500); RiseTimer.deleteTimer(RiseTimerId); LightControl(RED, STATIC, STATIC, BREATHE);}
+      else if(recv_data == "rescue_fail") {AllNeoBlink(RED, 5, 250); RiseTimer.deleteTimer(RiseTimerId);}
+      else if(recv_data == "shock"){
+        // if(curr_EsStage != EsStage){
+        //   if(EsStage == 1)          ES_Stage(1);
+        //   else if(EsStage == 2)     ES_Stage(2);
+        //   else if(EsStage == 3)     ES_Stage(3);
+        //   else                      DFPlayer.pause();
+        //   curr_EsStage = EsStage;
+      }
+      else Serial.println("from main : " + recv_data);
     }
-    else if(recv_data == "setting") LightControl(WHITE, STATIC, STATIC, STATIC);
-    else if(recv_data == "ready") LightControl(RED, STATIC, STATIC, BREATHE);
-    else if(recv_data == "activate_wait") LightControl(YELLOW, STATIC, STATIC, BREATHE);
-    else if(recv_data == "activate_t1") {LightControl(GREEN, STATIC, STATIC, BREATHE);
-                                            DFPlayer.playLargeFolder(1,1);}
-    else if(recv_data == "activate_t2") {LightControl(GREEN, BLINK, BLINK, BREATHE);
-                                            DFPlayer.playLargeFolder(1,1);}
-    else if(recv_data == "activate_t3") {LightControl(BLUE, STATIC, STATIC, BREATHE);
-                                            DFPlayer.playLargeFolder(1,1);}
-    else if(recv_data == "stage1") {LightControl(BLUE, STATIC, STATIC, BREATHE);
-                                            ES_Stage(1);}
-    else if(recv_data == "stage2") {LightControl(BLUE, STATIC, STATIC, BREATHE);
-                                            ES_Stage(2);}
-    else if(recv_data == "stage3") {LightControl(BLUE, STATIC, STATIC, BREATHE);
-                                            ES_Stage(3);}
-    else if(recv_data == "cool") LightControl(RED, STATIC, STATIC, BREATHE);
-    else if(recv_data == "rescue") LightControl(GREEN, STATIC, BLINK, RISE);
-    else if(recv_data == "rescue_suc") {AllNeoBlink(GREEN, 4, 500);
-                                            LightControl(RED, STATIC, STATIC, BREATHE);}
-    else if(recv_data == "rescue_fail") AllNeoBlink(RED, 5, 250);
-    else if(recv_data == "shock"){
-      if(EsStage == 1) DFPlayer.playLargeFolder(2, 1);
-      else if(EsStage == 2) DFPlayer.playLargeFolder(2, 2);
-      else if(EsStage == 3) DFPlayer.playLargeFolder(2, 3);
-      else DFPlayer.pause();
-    }
-
-    else Serial.println("from main : " + recv_data);
-    last_recv = recv_data;
   }
+}
+
+void SerialSend(String data){
+  String SendData = "@";
+  SendData += data;
+  SendData += " ";
+  SerialSend(SendData);
 }
 # 1 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
 void TimerInit(){
@@ -318,8 +318,12 @@ void TimerInit(){
     BlinkTimer.deleteTimer(BlinkTimerId);
     BreatheTimerId = BreatheTimer.setInterval(BreatheTime,BreatheTimerFunc);
     BreatheTimer.deleteTimer(BreatheTimerId);
+    RiseTimerId = RiseTimer.setInterval(RiseTime,RiseTimerFunc);
+    RiseTimer.deleteTimer(RiseTimerId);
     ShockTimerId = ShockTimer.setInterval(ShockCountTime,ShockTimerFunc);
     ShockTimer.deleteTimer(ShockTimerId);
+    EffectTimerId = EffectTimer.setInterval(EffectTime,EffectTimerFunc);
+    EffectTimer.deleteTimer(EffectTimerId);
 }
 
 //****************************************Blink Timer****************************************
@@ -327,6 +331,7 @@ void BlinkTimerStart(int Neo, int NeoColor){
     blink_neo = Neo;
     blink_color = NeoColor;
     if(Neo == ALLNEO) BlinkTimerId = BlinkTimer.setInterval(BlinkTime,BlinkAllTimerFunc);
+    if(Neo == TOPTAG) BlinkTimerId = BlinkTimer.setInterval(BlinkTime,BlinkTopTimerFunc);
     else BlinkTimerId = BlinkTimer.setInterval(BlinkTime,BlinkTimerFunc);
 }
 
@@ -337,6 +342,19 @@ void BlinkTimerFunc(){
     }
     else{
         pixels[blink_neo].lightColor(color[BLACK]);
+        blink_on = true;
+    }
+}
+
+void BlinkTopTimerFunc(){
+    if(blink_on == true){
+        pixels[TOP].lightColor(color[blink_color]);
+        pixels[TAG].lightColor(color[blink_color]);
+        blink_on = false;
+    }
+    else{
+        pixels[TOP].lightColor(color[BLACK]);
+        pixels[TAG].lightColor(color[BLACK]);
         blink_on = true;
     }
 }
@@ -364,16 +382,16 @@ void BreatheTimerStart(int Neo, int NeoColor){
 }
 
 void BreatheTimerFunc(){
-    if(breathe_step >= breathe_step_max) breathe_step = 0;
+    if(breathe_step >= breathe_step_max) IsCountUP = false;
+    else if(breathe_step <= 0) IsCountUP = true;
+
     for(int i=0; i<3; i++){
         breathe_color_arr[i] = color[breathe_color][i] /breathe_step_max*breathe_step;
     }
     pixels[breathe_neo].lightColor(breathe_color_arr);
-    breathe_step ++;
-    // if(breathe_step >= breathe_step_max)
-    //    breathe_step ++;
-    // else 
-    //    breathe_step --;
+
+    if(IsCountUP) breathe_step ++;
+    else breathe_step --;
 }
 
 //****************************************Shock Timer****************************************
@@ -394,6 +412,56 @@ void ShockTimerFunc(){
     shock_cnt++;
 }
 
-//****************************************Connect Timer****************************************
-void ConnTimerFunc(){
+//****************************************Rise Timer****************************************
+void RiseTimerStart(int color_code, int time){ // time=초
+    RiseColor = color_code;
+    RiseTime = time *1000/RiseStep;
+
+    pixels[BOT].lightColor(color[BLUE]);
+    pixels[BOT].lightColor(color[RiseColor], ENDpoint);
+    pixels[BOT].lightColor(color[BLUE], STRpoint + (ENDpoint-STRpoint)%2); // 초기값 설정
+
+    RiseTimer.setInterval(RiseTime,RiseTimerFunc);
+}
+
+void RiseTimerFunc(){
+    if(RiseCNT > RiseStep){
+        pixels[BOT].lightColor(color[RiseColor]);
+        RiseTimer.deleteTimer(RiseTimerId);
+        RiseCNT = 0;
+    }
+    pixels[BOT].setPixelColor(STRpoint - (RiseCNT/2), color[RiseColor][0], color[RiseColor][1], color[RiseColor][2]);
+    pixels[BOT].setPixelColor(ENDpoint - (RiseCNT/2), color[RiseColor][0], color[RiseColor][1], color[RiseColor][2]);
+    pixels[BOT].show();
+    RiseCNT++;
+}
+
+//****************************************Effect Timer****************************************
+void EffectTimerStart(int color_code){
+    EffColor = color_code;
+    EffectTimerId = EffectTimer.setInterval(EffectTime,EffectTimerFunc);
+}
+
+void EffectTimerFunc(){
+    if(EffPoint > NumPixels[TOP]) EffPoint = 0;
+
+    int EffArr[5] = {0};
+
+    for(int arr=0; arr<5; arr++){
+        int Eff_NeoPoint = EffPoint - arr;
+        if(Eff_NeoPoint<0) Eff_NeoPoint = NumPixels[TOP]+Eff_NeoPoint;
+        EffArr[arr] = Eff_NeoPoint;
+    }
+
+    pixels[TOP].lightColor(color[EffColor]);
+
+    for(int i=0; i<3; i++){
+        EffColorArr[i] = color[EffColor][i] *2/3;
+    }
+
+    for(int n; n<5; n++){
+        pixels[TOP].setPixelColor(EffArr[n], EffColorArr[0], EffColorArr[1], EffColorArr[2]);
+    }
+    pixels[TOP].show();
+    EffPoint ++;
 }
