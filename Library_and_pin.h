@@ -7,6 +7,7 @@
 #include <SimpleTimer.h>
 #include <HardwareSerial.h>
 #include <DFRobotDFPlayerMini.h>
+#include <HAS2_Wifi.h>
 
 #define SUBTTGO_RX_PIN  18
 #define SUBTTGO_TX_PIN  19
@@ -18,6 +19,7 @@
 #define	NEO_TAG			26
 #define NEO_BOT			27
 
-#define ES_PIN          15
+#define ES_SHOCK_PIN    15
+#define ES_DATA_PIN     21  // Logic 설치 필요
 
 #endif

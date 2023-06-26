@@ -29,9 +29,10 @@ void setup(){
   TimerInit();
   NeopixelInit();
   LightControl(WHITE, STATIC, STATIC, STATIC);
+  // WifiInit();
   EsInit();
+  // DfpInit();
   Serial_HandShake();
-  DfpInit();
   Serial.println("===============TTGO INITALIZED===============");
 }
 
@@ -67,19 +68,22 @@ void DfpInit(){
 void EsInit(){
   Serial.println("EsInit");
   pinMode(15, 0x03);
+  ledcSetup(0, 5000, 0);
+  ledcAttachPin(21 /* Logic 설치 필요*/, 0);
   EsOn(false);
 }
 
 void EsOn(bool tf){
   if(tf == true){
-    Serial.println("Es On");
-    digitalWrite(15, 0x1);
-    IsEsOn = true;
-  }
-  else{
-    Serial.println("Es Off");
-    digitalWrite(15, 0x0);
-    IsEsOn = false;
+    Serial.println("Electric Shock!!!");
+    if(IsEsHigh){
+      digitalWrite(15, 0x0);
+      IsEsHigh = false;
+    }
+    else{
+      digitalWrite(15, 0x1);
+      IsEsHigh = true;
+    }
   }
 }
 
@@ -88,23 +92,23 @@ void ES_Stage(int stage){
   Serial.print("ES STAGE" + (String)(stage) + " START :: ");
   switch (stage){
   case 1:
-    ES_Control(1,3);
-    ES_Control(4,8);
+    ES_Info(1,3);
+    ES_Info(4,8);
     ES_Loop_Confirm(4);
     break;
   case 2:
-    ES_Control(2,6);
-    ES_Control(7,8);
+    ES_Info(2,6);
+    ES_Info(7,8);
     ES_Loop_Confirm(4);
     break;
   case 3:
-    ES_Control(2,6);
-    ES_Control(7,8);
-    ES_Control(9,10);
+    ES_Info(2,6);
+    ES_Info(7,8);
+    ES_Info(9,10);
     ES_Loop_Confirm(4);
     break;
   case 10:
-    ES_Control(1,2);
+    ES_Info(1,2);
     ES_Loop_Confirm(1);
   case 0:
   default:
@@ -113,7 +117,7 @@ void ES_Stage(int stage){
   }
 }
 
-void ES_Control(int start_point, int end_point){ // ES 정보입력 (시점, 종점)
+void ES_Info(int start_point, int end_point){ // ES 정보입력 (시점, 종점)
   EsArr[EsArr_cnt] = start_point;
   EsArr_cnt ++;
   EsArr[EsArr_cnt] = end_point;
@@ -126,7 +130,7 @@ void ES_Loop_Confirm(int loop_num){ // ES 입력정보 적용
 
   int loop_end = EsArr[EsArr_cnt-1];
   for(int i=0; i<loop_num * loop_end; i+=2){
-    ES_Control(EsArr[i]+loop_end, EsArr[i+1]+loop_end);
+    ES_Info(EsArr[i]+loop_end, EsArr[i+1]+loop_end);
     if(EsArr_cnt > EsArr_max) goto ES_START;
   }
   ES_START:
@@ -151,6 +155,16 @@ void ES_Print(){
   Serial.print("#EsData : " + EsData);
   Serial.print(" #ShockEnd : " + (String)(shock_end));
   Serial.println("");
+}
+
+//****************************************ES Serial****************************************
+void ES_Start(int sec, int strength){
+  shock_interval = sec;
+  int ShockLevel = ShockLevel_max * strength/100;
+
+  ledcWrite(0, ShockLevel);
+  ShockTimer.deleteTimer(ShockTimerId);
+  ShockTimerId = ShockTimer.setInterval(ShockCountTime,ShockTimerFunc);
 }
 # 1 "c:\\Github\\Geekble-Electric_Chair_sub\\light_control.ino"
 //****************************************Neopixel SETUP****************************************
@@ -232,8 +246,8 @@ void Serial_HandShake(){
   delay(100);
   Serial.println("Connecting to TTGO");
   SerialSend("connect");
-  if(subTTGO.read() == '@'){
-    if(subTTGO.available()){
+  if(subTTGO.available()){
+    if(subTTGO.read() == '@'){
       String recv_data = subTTGO.readStringUntil(' ');
       if(recv_data == "connect"){
         Serial.println("recv CONNECT");
@@ -255,25 +269,10 @@ void Serial_HandShake(){
   }
 }
 
-void Serial_RestartCheck(){
-  Serial.print("0");
-  if(subTTGO.available()){
-    String recv_data = subTTGO.readStringUntil(' ');
-    if(recv_data == "connect"){
-      SerialSend("ok");
-      Serial.println("send CONNECT");
-    }
-    else
-      Serial.println("from main : " + recv_data);
-  }
-  delay(500);
-}
-
 void Serial_Read(){
   if(subTTGO.available()){
-    EsOn(false);
-    EsStage = 0;
     if(subTTGO.read() == '@'){
+      EsOn(false);
       String recv_data = subTTGO.readStringUntil(' ');
       Serial.println("from main : " + recv_data);
       if(recv_data == "connect"){
@@ -285,20 +284,21 @@ void Serial_Read(){
       else if(recv_data == "activate_t1") {LightControl(GREEN, STATIC, STATIC, BREATHE);}
       else if(recv_data == "activate_t2") {LightControl(GREEN, BLINK, BLINK, BREATHE);}
       else if(recv_data == "activate_t3") {LightControl(BLUE, STATIC, STATIC, BREATHE);}
-      else if(recv_data == "stage1") {LightControl(BLUE, STATIC, STATIC, BREATHE); EsStage = 1; DFPlayer.playLargeFolder(2,1);}
-      else if(recv_data == "stage2") {LightControl(BLUE, STATIC, STATIC, BREATHE); EsStage = 2; DFPlayer.playLargeFolder(2,2);}
-      else if(recv_data == "stage3") {LightControl(BLUE, STATIC, STATIC, BREATHE); EsStage = 3; DFPlayer.playLargeFolder(2,3);}
+      else if(recv_data == "stage1") {LightControl(BLUE, STATIC, STATIC, BREATHE); EsStage = 1; ShockTimer.deleteTimer(ShockTimerId); DFPlayer.playLargeFolder(2,1);}
+      else if(recv_data == "stage2") {LightControl(BLUE, STATIC, STATIC, BREATHE); EsStage = 2; ShockTimer.deleteTimer(ShockTimerId); DFPlayer.playLargeFolder(2,2);}
+      else if(recv_data == "stage3") {LightControl(BLUE, STATIC, STATIC, BREATHE); EsStage = 3; ShockTimer.deleteTimer(ShockTimerId); DFPlayer.playLargeFolder(2,3);}
       else if(recv_data == "cool") LightControl(RED, STATIC, STATIC, BREATHE);
       else if(recv_data == "rescue") LightControl(GREEN, STATIC, BLINK, RISE);
       else if(recv_data == "rescue_suc") {AllNeoBlink(GREEN, 4, 500); RiseTimer.deleteTimer(RiseTimerId); LightControl(RED, STATIC, STATIC, BREATHE);}
       else if(recv_data == "rescue_fail") {AllNeoBlink(RED, 5, 250); RiseTimer.deleteTimer(RiseTimerId);}
       else if(recv_data == "shock"){
-        // if(curr_EsStage != EsStage){
-        //   if(EsStage == 1)          ES_Stage(1);
-        //   else if(EsStage == 2)     ES_Stage(2);
-        //   else if(EsStage == 3)     ES_Stage(3);
-        //   else                      DFPlayer.pause();
-        //   curr_EsStage = EsStage;
+        if(curr_EsStage != EsStage){
+          if(EsStage == 1) ES_Start(10, 40);
+          else if(EsStage == 2) ES_Start(5, 70);
+          else if(EsStage == 3) ES_Start(5, 100);
+          else DFPlayer.pause();
+          curr_EsStage = EsStage;
+        }
       }
       else Serial.println("from main : " + recv_data);
     }
@@ -306,10 +306,9 @@ void Serial_Read(){
 }
 
 void SerialSend(String data){
-  String SendData = "@";
-  SendData += data;
-  SendData += " ";
-  SerialSend(SendData);
+  String SendData = "@" + data + " ";
+  subTTGO.print(SendData);
+  Serial.println("to Main : " + SendData);
 }
 # 1 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
 void TimerInit(){
@@ -398,6 +397,17 @@ void BreatheTimerFunc(){
 void ShockTimerFunc(){
     Serial.print("CNT:" + (String)(shock_cnt) + " ");
 
+    if(shock_cnt >= shock_interval){
+        EsOn(true);
+        shock_cnt = 0;
+    }
+    else
+        shock_cnt ++;
+}
+
+void ShockArrTimerFunc(){
+    Serial.print("CNT:" + (String)(shock_cnt) + " ");
+
     if(shock_cnt == EsArr[shock_arr]){
         if((shock_arr%2) == 0) EsOn(true);
         else EsOn(false);
@@ -464,4 +474,16 @@ void EffectTimerFunc(){
     }
     pixels[TOP].show();
     EffPoint ++;
+}
+# 1 "c:\\Github\\Geekble-Electric_Chair_sub\\wifi.ino"
+void WifiInit(){
+  LightControl(RED, STATIC, STATIC, STATIC);
+  // has2wifi.Setup("KT_GiGA_6C64","ed46zx1198");
+  has2wifi.Setup("badland");
+  // has2wifi.Setup("city");
+}
+
+void WifiCheckOTA(){
+  // if()
+  // has2wifi.FirmwareUpdate();
 }

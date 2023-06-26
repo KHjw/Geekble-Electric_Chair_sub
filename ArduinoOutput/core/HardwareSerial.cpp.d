@@ -1,6 +1,6 @@
 c:\Github\Geekble-Electric_Chair_sub\ArduinoOutput\core\HardwareSerial.cpp.o: \
  C:\Users\kevin\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.4\cores\esp32\HardwareSerial.cpp \
- C:\Users\kevin\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.4\variants\ttgo-t1/pins_arduino.h \
+ C:\Users\kevin\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.4\variants\esp32/pins_arduino.h \
  C:\Users\kevin\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.4\cores\esp32\HardwareSerial.h \
  C:\Users\kevin\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.4\cores\esp32\Stream.h \
  C:\Users\kevin\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.4\cores\esp32\Print.h \

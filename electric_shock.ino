@@ -1,20 +1,23 @@
 //****************************************ES SETUP****************************************
 void EsInit(){
   Serial.println("EsInit");
-  pinMode(ES_PIN, OUTPUT);
+  pinMode(ES_SHOCK_PIN, OUTPUT);
+  ledcSetup(0, 5000, 0);
+  ledcAttachPin(ES_DATA_PIN, 0);
   EsOn(false);
 }
 
 void EsOn(bool tf){
   if(tf == true){
-    Serial.println("Es On");
-    digitalWrite(ES_PIN, HIGH);
-    IsEsOn = true;
-  }
-  else{
-    Serial.println("Es Off");
-    digitalWrite(ES_PIN, LOW);
-    IsEsOn = false;
+    Serial.println("Electric Shock!!!");
+    if(IsEsHigh){
+      digitalWrite(ES_SHOCK_PIN, LOW);
+      IsEsHigh = false;
+    }
+    else{
+      digitalWrite(ES_SHOCK_PIN, HIGH);
+      IsEsHigh = true;
+    }
   }
 }
 
@@ -23,23 +26,23 @@ void ES_Stage(int stage){
   Serial.print("ES STAGE" + (String)(stage) + " START :: ");
   switch (stage){
   case 1:
-    ES_Control(1,3);
-    ES_Control(4,8);
+    ES_Info(1,3);
+    ES_Info(4,8);
     ES_Loop_Confirm(4);
     break;
   case 2:
-    ES_Control(2,6);
-    ES_Control(7,8);
+    ES_Info(2,6);
+    ES_Info(7,8);
     ES_Loop_Confirm(4);
     break;
   case 3:
-    ES_Control(2,6);
-    ES_Control(7,8);
-    ES_Control(9,10);
+    ES_Info(2,6);
+    ES_Info(7,8);
+    ES_Info(9,10);
     ES_Loop_Confirm(4);
     break;
   case 10:
-    ES_Control(1,2);
+    ES_Info(1,2);
     ES_Loop_Confirm(1);
   case 0:
   default:
@@ -48,7 +51,7 @@ void ES_Stage(int stage){
   }
 }
 
-void ES_Control(int start_point, int end_point){    // ES 정보입력 (시점, 종점)
+void ES_Info(int start_point, int end_point){    // ES 정보입력 (시점, 종점)
   EsArr[EsArr_cnt] = start_point;
   EsArr_cnt ++;
   EsArr[EsArr_cnt] = end_point;
@@ -61,7 +64,7 @@ void ES_Loop_Confirm(int loop_num){                 // ES 입력정보 적용
 
   int loop_end = EsArr[EsArr_cnt-1];
   for(int i=0; i<loop_num * loop_end; i+=2){
-    ES_Control(EsArr[i]+loop_end, EsArr[i+1]+loop_end);
+    ES_Info(EsArr[i]+loop_end, EsArr[i+1]+loop_end);
     if(EsArr_cnt > EsArr_max)  goto ES_START;
   }
   ES_START:
@@ -86,4 +89,14 @@ void ES_Print(){
   Serial.print("#EsData : " + EsData);
   Serial.print(" #ShockEnd : " + (String)(shock_end));
   Serial.println("");
+}
+
+//****************************************ES Serial****************************************
+void ES_Start(int sec, int strength){
+  shock_interval = sec;
+  int ShockLevel = ShockLevel_max * strength/100;
+
+  ledcWrite(0, ShockLevel);
+  ShockTimer.deleteTimer(ShockTimerId);
+  ShockTimerId = ShockTimer.setInterval(ShockCountTime,ShockTimerFunc);
 }

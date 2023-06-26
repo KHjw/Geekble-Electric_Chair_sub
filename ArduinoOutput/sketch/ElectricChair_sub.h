@@ -14,6 +14,14 @@ void SerialSend(String data);
 
 String last_recv;
 
+//****************************************Wifi SETUP****************************************
+HAS2_Wifi has2wifi;
+
+void WifiInit();
+void WifiCheckOTA();
+
+bool IsWifiConnected = false;
+
 //****************************************SimpleTimer SETUP****************************************
 SimpleTimer BlinkTimer;
 SimpleTimer BreatheTimer;
@@ -28,8 +36,11 @@ void BlinkTimerFunc();
 void BlinkTopTimerFunc();
 void BlinkAllTimerFunc();
 void ShockTimerFunc();
+void ShockArrTimerFunc();
 void RiseTimerStart(int color_code, int time);
 void RiseTimerFunc();
+void EffectTimerStart(int color_code);
+void EffectTimerFunc();
 
 
 int BlinkTimerId;
@@ -39,7 +50,7 @@ int ShockTimerId;
 int EffectTimerId;
 
 // blink setup
-unsigned long BlinkTime = 250;   // 1sec
+unsigned long BlinkTime = 250;   // 0.25sec
 int blink_num = 5;
 int blink_time = 500;
 
@@ -48,9 +59,9 @@ int blink_color = 0;
 bool blink_on = true;
 
 // shock setup
-unsigned long ShockCountTime = 1000;    // 2sec
-int shock_interval = 5;                 // ES 인터벌 간격(초)
-int shock_cnt = 0;
+unsigned long ShockCountTime = 1000;     // 1sec
+int shock_interval = 10;                 // ES 인터벌 간격(초)
+long shock_cnt = 0;
 int shock_arr = 0;
 int shock_end = 0;
 
@@ -114,17 +125,19 @@ void LightMode(int light_code, int color_code, int mode);
 void EsInit();
 
 void ES_Stage(int stage);
-void ES_Control(int start_point, int end_point);
+void ES_Info(int start_point, int end_point);
 void ES_Loop_Confirm(int loop_num);
 void ES_Print();
+void ES_Start(int sec, int strength);
 
 int EsStage = 0;
 int curr_EsStage = 0;
 int EsArr[60] = {0};
 int EsArr_max = 60;
 int EsArr_cnt = 0;
-bool IsEsOn = false;
-bool IsEsStageChange = false;
+bool IsEsHigh = false;
+
+int ShockLevel_max = 100;      // max 255
 
 //****************************************DFPlayer SETUP****************************************
 HardwareSerial serialDFP(2);

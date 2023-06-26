@@ -98,7 +98,7 @@ c:\Github\Geekble-Electric_Chair_sub\ArduinoOutput\core\esp32-hal-gpio.c.o: \
  C:\Users\kevin\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.4\cores\esp32\esp32-hal-psram.h \
  C:\Users\kevin\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.4\cores\esp32\esp32-hal-rgb-led.h \
  C:\Users\kevin\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.4\cores\esp32\esp32-hal-cpu.h \
- C:\Users\kevin\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.4\variants\ttgo-t1/pins_arduino.h \
+ C:\Users\kevin\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.4\variants\esp32/pins_arduino.h \
  C:\Users\kevin\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.4/tools/sdk/esp32/include/hal/include/hal/gpio_hal.h \
  C:\Users\kevin\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.4/tools/sdk/esp32/include/hal/esp32/include/hal/gpio_ll.h \
  C:\Users\kevin\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.4/tools/sdk/esp32/include/soc/esp32/include/soc/rtc_cntl_reg.h \

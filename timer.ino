@@ -84,6 +84,17 @@ void BreatheTimerFunc(){
 void ShockTimerFunc(){
     Serial.print("CNT:" + (String)(shock_cnt) + " ");
 
+    if(shock_cnt >= shock_interval){
+        EsOn(true);
+        shock_cnt = 0;
+    }
+    else
+        shock_cnt ++;
+}
+
+void ShockArrTimerFunc(){
+    Serial.print("CNT:" + (String)(shock_cnt) + " ");
+
     if(shock_cnt == EsArr[shock_arr]){
         if((shock_arr%2) == 0)  EsOn(true);
         else                    EsOn(false);

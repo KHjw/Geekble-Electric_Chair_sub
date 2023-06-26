@@ -18,9 +18,10 @@ void setup(){
   TimerInit();
   NeopixelInit();
   LightControl(WHITE, STATIC, STATIC, STATIC);
+  // WifiInit();
   EsInit();
+  // DfpInit();
   Serial_HandShake();
-  DfpInit();
   Serial.println("===============TTGO INITALIZED===============");
 }
 

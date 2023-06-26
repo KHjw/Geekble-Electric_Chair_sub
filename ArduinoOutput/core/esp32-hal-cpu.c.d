@@ -95,7 +95,7 @@ c:\Github\Geekble-Electric_Chair_sub\ArduinoOutput\core\esp32-hal-cpu.c.o: \
  C:\Users\kevin\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.4\cores\esp32\esp32-hal-matrix.h \
  C:\Users\kevin\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.4\cores\esp32\esp32-hal-uart.h \
  C:\Users\kevin\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.4\cores\esp32\esp32-hal-gpio.h \
- C:\Users\kevin\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.4\variants\ttgo-t1/pins_arduino.h \
+ C:\Users\kevin\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.4\variants\esp32/pins_arduino.h \
  C:\Users\kevin\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.4\cores\esp32\esp32-hal-touch.h \
  C:\Users\kevin\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.4\cores\esp32\esp32-hal-dac.h \
  C:\Users\kevin\AppData\Local\Arduino15\packages\esp32\hardware\esp32\2.0.4/tools/sdk/esp32/include/driver/include/driver/gpio.h \

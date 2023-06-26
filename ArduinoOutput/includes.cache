@@ -7,7 +7,7 @@
   {
     "Sourcefile": null,
     "Include": "",
-    "Includepath": "C:\\Users\\kevin\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\2.0.4\\variants\\ttgo-t1"
+    "Includepath": "C:\\Users\\kevin\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\2.0.4\\variants\\esp32"
   },
   {
     "Sourcefile": "c:\\Github\\Geekble-Electric_Chair_sub\\ArduinoOutput\\sketch\\Geekble-Electric_Chair_sub.ino.cpp",
@@ -23,6 +23,41 @@
     "Sourcefile": "c:\\Github\\Geekble-Electric_Chair_sub\\ArduinoOutput\\sketch\\Geekble-Electric_Chair_sub.ino.cpp",
     "Include": "DFRobotDFPlayerMini.h",
     "Includepath": "C:\\Users\\kevin\\OneDrive\\문서\\Arduino\\libraries\\DFRobotDFPlayerMini-master"
+  },
+  {
+    "Sourcefile": "c:\\Github\\Geekble-Electric_Chair_sub\\ArduinoOutput\\sketch\\Geekble-Electric_Chair_sub.ino.cpp",
+    "Include": "HAS2_Wifi.h",
+    "Includepath": "C:\\Users\\kevin\\OneDrive\\문서\\Arduino\\libraries\\HAS2_Wifi"
+  },
+  {
+    "Sourcefile": "c:\\Github\\Geekble-Electric_Chair_sub\\ArduinoOutput\\sketch\\Geekble-Electric_Chair_sub.ino.cpp",
+    "Include": "WiFi.h",
+    "Includepath": "C:\\Users\\kevin\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\2.0.4\\libraries\\WiFi\\src"
+  },
+  {
+    "Sourcefile": "c:\\Github\\Geekble-Electric_Chair_sub\\ArduinoOutput\\sketch\\Geekble-Electric_Chair_sub.ino.cpp",
+    "Include": "HTTPClient.h",
+    "Includepath": "C:\\Users\\kevin\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\2.0.4\\libraries\\HTTPClient\\src"
+  },
+  {
+    "Sourcefile": "c:\\Github\\Geekble-Electric_Chair_sub\\ArduinoOutput\\sketch\\Geekble-Electric_Chair_sub.ino.cpp",
+    "Include": "WiFiClientSecure.h",
+    "Includepath": "C:\\Users\\kevin\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\2.0.4\\libraries\\WiFiClientSecure\\src"
+  },
+  {
+    "Sourcefile": "c:\\Github\\Geekble-Electric_Chair_sub\\ArduinoOutput\\sketch\\Geekble-Electric_Chair_sub.ino.cpp",
+    "Include": "ArduinoJson.h",
+    "Includepath": "C:\\Users\\kevin\\OneDrive\\문서\\Arduino\\libraries\\ArduinoJson\\src"
+  },
+  {
+    "Sourcefile": "c:\\Github\\Geekble-Electric_Chair_sub\\ArduinoOutput\\sketch\\Geekble-Electric_Chair_sub.ino.cpp",
+    "Include": "HTTPUpdate.h",
+    "Includepath": "C:\\Users\\kevin\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\2.0.4\\libraries\\HTTPUpdate\\src"
+  },
+  {
+    "Sourcefile": "c:\\Github\\Geekble-Electric_Chair_sub\\ArduinoOutput\\sketch\\Geekble-Electric_Chair_sub.ino.cpp",
+    "Include": "Update.h",
+    "Includepath": "C:\\Users\\kevin\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\2.0.4\\libraries\\Update\\src"
   },
   {
     "Sourcefile": "c:\\Github\\Geekble-Electric_Chair_sub\\ArduinoOutput\\sketch\\Geekble-Electric_Chair_sub.ino.cpp",
@@ -61,6 +96,91 @@
   },
   {
     "Sourcefile": "C:\\Users\\kevin\\OneDrive\\문서\\Arduino\\libraries\\DFRobotDFPlayerMini-master\\DFRobotDFPlayerMini.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\kevin\\OneDrive\\문서\\Arduino\\libraries\\HAS2_Wifi\\HAS2_Wifi.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\kevin\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\2.0.4\\libraries\\WiFi\\src\\WiFi.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\kevin\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\2.0.4\\libraries\\WiFi\\src\\WiFiAP.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\kevin\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\2.0.4\\libraries\\WiFi\\src\\WiFiClient.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\kevin\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\2.0.4\\libraries\\WiFi\\src\\WiFiGeneric.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\kevin\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\2.0.4\\libraries\\WiFi\\src\\WiFiMulti.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\kevin\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\2.0.4\\libraries\\WiFi\\src\\WiFiSTA.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\kevin\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\2.0.4\\libraries\\WiFi\\src\\WiFiScan.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\kevin\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\2.0.4\\libraries\\WiFi\\src\\WiFiServer.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\kevin\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\2.0.4\\libraries\\WiFi\\src\\WiFiUdp.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\kevin\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\2.0.4\\libraries\\HTTPClient\\src\\HTTPClient.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\kevin\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\2.0.4\\libraries\\WiFiClientSecure\\src\\WiFiClientSecure.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\kevin\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\2.0.4\\libraries\\WiFiClientSecure\\src\\esp_crt_bundle.c",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\kevin\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\2.0.4\\libraries\\WiFiClientSecure\\src\\ssl_client.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\kevin\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\2.0.4\\libraries\\HTTPUpdate\\src\\HTTPUpdate.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\kevin\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\2.0.4\\libraries\\Update\\src\\HttpsOTAUpdate.cpp",
+    "Include": "",
+    "Includepath": null
+  },
+  {
+    "Sourcefile": "C:\\Users\\kevin\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\2.0.4\\libraries\\Update\\src\\Updater.cpp",
     "Include": "",
     "Includepath": null
   }
