@@ -7,7 +7,7 @@
   {
     "Sourcefile": null,
     "Include": "",
-    "Includepath": "C:\\Users\\kevin\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\2.0.4\\variants\\esp32"
+    "Includepath": "C:\\Users\\kevin\\AppData\\Local\\Arduino15\\packages\\esp32\\hardware\\esp32\\2.0.4\\variants\\ttgo-t1"
   },
   {
     "Sourcefile": "c:\\Github\\Geekble-Electric_Chair_sub\\ArduinoOutput\\sketch\\Geekble-Electric_Chair_sub.ino.cpp",

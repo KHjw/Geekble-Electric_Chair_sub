@@ -17,13 +17,14 @@ void setup(){
   Serial.println("===============TTGO INIT===============");
   TimerInit();
   NeopixelInit();
-  LightControl(WHITE, STATIC, STATIC, STATIC);
   // WifiInit();
   EsInit();
-  // DfpInit();
+  DfpInit();
   Serial_HandShake();
   Serial.println("===============TTGO INITALIZED===============");
 }
+
+// 흰색 - Neo / 보라 - SerialRecv "ok" / 노랑 - DFP / 빨강 - wifi / 
 
 void loop(){
   Serial_Read();
@@ -31,4 +32,5 @@ void loop(){
   BlinkTimer.run();
   BreatheTimer.run();
   RiseTimer.run();
+  EffectTimer.run();
 }

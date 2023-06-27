@@ -94,6 +94,7 @@ void ES_Print(){
 //****************************************ES Serial****************************************
 void ES_Start(int sec, int strength){
   shock_interval = sec;
+  if(strength >= 100) strength = 100;
   int ShockLevel = ShockLevel_max * strength/100;
 
   ledcWrite(0, ShockLevel);

@@ -4,6 +4,7 @@ void NeopixelInit(){
   for(int i=0; i<NeoNum; i++){
     pixels[i].begin();
   }
+  LightControl(WHITE, STATIC, STATIC, STATIC);
 }
 
 void AllNeoColor(int color_code){
@@ -30,13 +31,13 @@ void LightControl(int color_code, int top_mode, int tag_mode, int bot_mode){
   BreatheTimer.deleteTimer(BreatheTimerId);
   BlinkTimer.deleteTimer(BlinkTimerId);
   RiseTimer.deleteTimer(RiseTimerId);
-
-  if(top_mode != STATIC)    EffectTimer.deleteTimer(EffectTimerId);
-  else    EffectTimerStart(color_code);
-  
+  EffectTimer.deleteTimer(EffectTimerId);
 
   if(blink_num <= 1){
-    LightMode(TOP, color_code, top_mode);
+    if(top_mode == STATIC)
+      EffectTimerStart(color_code);
+    else
+      LightMode(TOP, color_code, top_mode);
     LightMode(TAG, color_code, tag_mode);
     LightMode(BOT, color_code, bot_mode);
   }
@@ -61,7 +62,7 @@ void LightMode(int neo_code, int color_code, int mode){
       BreatheTimerStart(neo_code, color_code);
       break;
     case RISE:
-      RiseTimerStart(color_code, 5);
+      RiseTimerStart(color_code, 15);
       break;
     default:
       pixels[neo_code].lightColor(color[BLACK]);

@@ -1,5 +1,6 @@
 void DfpInit(){
   DFPINIT:
+  LightControl(YELLOW, STATIC, STATIC, STATIC);
   serialDFP.begin(9600, SERIAL_8N1, DFP_RX, DFP_TX);
   Serial.println();
   Serial.println(F("DFRobot DFPlayer Mini Demo"));
@@ -13,7 +14,7 @@ void DfpInit(){
   }
   Serial.println(F("DFPlayer Mini online."));
 
-  DFPlayer.volume(22);              // max 30
+  DFPlayer.volume(20);              // max 30
   DFPlayer.EQ(DFPLAYER_EQ_NORMAL);
   DFPlayer.outputDevice(DFPLAYER_DEVICE_SD);
 }

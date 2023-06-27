@@ -82,14 +82,14 @@ void BreatheTimerFunc(){
 
 //****************************************Shock Timer****************************************
 void ShockTimerFunc(){
-    Serial.print("CNT:" + (String)(shock_cnt) + " ");
-
     if(shock_cnt >= shock_interval){
         EsOn(true);
         shock_cnt = 0;
     }
-    else
+    else{
+        Serial.print("CNT:" + (String)(shock_cnt) + " ");
         shock_cnt ++;
+    }
 }
 
 void ShockArrTimerFunc(){
@@ -114,10 +114,14 @@ void RiseTimerStart(int color_code, int time){      // time=초
     RiseColor = color_code;
     RiseTime = time *1000/RiseStep;
 
-    pixels[BOT].lightColor(color[BLUE]);
-    pixels[BOT].lightColor(color[RiseColor], ENDpoint);
-    pixels[BOT].lightColor(color[BLUE], STRpoint + (ENDpoint-STRpoint)%2);     // 초기값 설정
-    
+    for(int n=0; n<NumPixels[BOT]; n++)
+        pixels[BOT].setPixelColor(n, color[BLUE][0], color[BLUE][1], color[BLUE][2]);
+    for(int n=0; n<STRpoint; n++)
+        pixels[BOT].setPixelColor(n, color[RiseColor][0], color[RiseColor][1], color[RiseColor][2]);
+    for(int n=ENDpoint; n<NumPixels[BOT]; n++)
+        pixels[BOT].setPixelColor(n, color[RiseColor][0], color[RiseColor][1], color[RiseColor][2]);
+    // pixels[BOT].setPixelColor(MIDpoint, color[RED][0], color[RED][1], color[RED][2]);
+    pixels[BOT].show();
     RiseTimer.setInterval(RiseTime,RiseTimerFunc);
 }
 
@@ -127,38 +131,49 @@ void RiseTimerFunc(){
         RiseTimer.deleteTimer(RiseTimerId);
         RiseCNT = 0;
     }
-    pixels[BOT].setPixelColor(STRpoint - (RiseCNT/2), color[RiseColor][0], color[RiseColor][1], color[RiseColor][2]);
-    pixels[BOT].setPixelColor(ENDpoint - (RiseCNT/2), color[RiseColor][0], color[RiseColor][1], color[RiseColor][2]);
+    pixels[BOT].setPixelColor(STRpoint + RiseCNT, color[RiseColor][0], color[RiseColor][1], color[RiseColor][2]);
+    pixels[BOT].setPixelColor(ENDpoint - RiseCNT, color[RiseColor][0], color[RiseColor][1], color[RiseColor][2]);
     pixels[BOT].show();
     RiseCNT++;
 }
 
 //****************************************Effect Timer****************************************
 void EffectTimerStart(int color_code){
-    EffColor = color_code;
+    EffColor = color_code; 
     EffectTimerId = EffectTimer.setInterval(EffectTime,EffectTimerFunc);
 }
 
 void EffectTimerFunc(){
     if(EffPoint > NumPixels[TOP])   EffPoint = 0;
+    int EffNeoNum1 = 4;
+    int EffNeoNum2 = 6;
+    int EffNeoNum3 = 4;
+    int EffColorArr0[3] = {0};
+    int EffColorArr1[3] = {0};
+    int EffColorArr2[3] = {0};
+    int EffColorArr3[3] = {0};
 
-    int EffArr[5] = {0};
-    
-    for(int arr=0; arr<5; arr++){
+    for(int i=0; i<3; i++)        EffColorArr0[i] = color[EffColor][i] *1/7;    // 배경색
+    for(int i=0; i<3; i++)        EffColorArr1[i] = color[EffColor][i] *1/2;    // 제 1색
+    for(int i=0; i<3; i++)        EffColorArr2[i] = color[EffColor][i] *1/1;    // 제 2색
+    for(int i=0; i<3; i++)        EffColorArr3[i] = color[EffColor][i] *1/2;    // 제 3색
+
+    int EffArr[50] = {0};
+    int EffNum = EffNeoNum1+EffNeoNum2+EffNeoNum3;
+    for(int arr=0; arr<EffNum; arr++){
         int Eff_NeoPoint = EffPoint - arr;
         if(Eff_NeoPoint<0)  Eff_NeoPoint = NumPixels[TOP]+Eff_NeoPoint;
         EffArr[arr] = Eff_NeoPoint;
     }
 
-    pixels[TOP].lightColor(color[EffColor]);
-
-    for(int i=0; i<3; i++){
-        EffColorArr[i] = color[EffColor][i] *2/3;
-    }
-
-    for(int n; n<5; n++){
-        pixels[TOP].setPixelColor(EffArr[n], EffColorArr[0], EffColorArr[1], EffColorArr[2]);
-    }
+    for(int n=0; n<NumPixels[TOP]; n++)
+        pixels[TOP].setPixelColor(n, EffColorArr0[0], EffColorArr0[1], EffColorArr0[2]);
+    for(int n=0; n<EffNeoNum1; n++)
+        pixels[TOP].setPixelColor(EffArr[n], EffColorArr1[0], EffColorArr1[1], EffColorArr1[2]);
+    for(int n=EffNeoNum1; n<EffNeoNum1+EffNeoNum2; n++)
+        pixels[TOP].setPixelColor(EffArr[n], EffColorArr2[0], EffColorArr2[1], EffColorArr2[2]);
+    for(int n=EffNeoNum1+EffNeoNum2; n<EffNeoNum1+EffNeoNum2+EffNeoNum3; n++)
+        pixels[TOP].setPixelColor(EffArr[n], EffColorArr3[0], EffColorArr3[1], EffColorArr3[2]);
     pixels[TOP].show();
     EffPoint ++;
 }

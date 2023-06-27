@@ -34,6 +34,8 @@ void BlinkTimerStart(int Neo, int NeoColor);
 void BlinkTimerFunc();
 void BlinkTopTimerFunc();
 void BlinkAllTimerFunc();
+void BreatheTimerStart(int Neo, int NeoColor);
+void BreatheTimerFunc();
 void ShockTimerFunc();
 void ShockArrTimerFunc();
 void RiseTimerStart(int color_code, int time);
@@ -60,7 +62,7 @@ bool blink_on = true;
 // shock setup
 unsigned long ShockCountTime = 1000;     // 1sec
 int shock_interval = 10;                 // ES 인터벌 간격(초)
-long shock_cnt = 0;
+int shock_cnt = 0;
 int shock_arr = 0;
 int shock_end = 0;
 
@@ -75,28 +77,27 @@ int breathe_color_arr[3];
 bool IsCountUP = true;
 
 // Rise setup
-int RiseStep = 100;
+int RiseStep = 50;
 int RiseColor = 0;
-int RiseCNT;
-long RiseTime = 5 *1000/RiseStep;    // initial setting
+int RiseCNT = 0;
+long RiseTime = 15 *1000/RiseStep;    // initial setting
 
-int STRpoint = 5;
-int ENDpoint = 140;
-int MIDpoint = (ENDpoint - STRpoint)/2;
+int MIDpoint = 154/2 - 10;
+int STRpoint = MIDpoint-RiseStep;
+int ENDpoint = MIDpoint+RiseStep;
 
 // Effect setup
-unsigned long EffectTime = 100;
+unsigned long EffectTime = 80;
 
 int EffPoint = 0;
 int EffColor = 0;
-int EffColorArr[3] = {0};
 
 //****************************************Light Control SETUP****************************************
 void NeopixelInit();
 void AllNeoColor(int color_code);
 
 const int NeoNum = 3;
-const int NumPixels[3] = {84,12,154};
+const int NumPixels[3] = {84,12,155};
 
 enum {TOP = 0, TAG, BOT, TOPTAG, ALLNEO};   // led_code
 Adafruit_NeoPixel pixels[3] = {Adafruit_NeoPixel(NumPixels[TOP], NEO_TOP, NEO_GRB + NEO_KHZ800),
