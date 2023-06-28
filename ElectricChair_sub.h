@@ -137,8 +137,7 @@ int EsArr_max = 60;
 int EsArr_cnt = 0;
 bool IsEsHigh = false;
 
-int ShockLevel_max = 255;      // max 255
-int ShockLevel = 0;
+int ShockLevel_max = 200;      // 3단계 전기충격 레벨, max 255
 
 //****************************************DFPlayer SETUP****************************************
 HardwareSerial serialDFP(2);

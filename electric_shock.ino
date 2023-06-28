@@ -21,6 +21,19 @@ void EsOn(bool tf){
   }
 }
 
+//****************************************ES Serial****************************************
+void ES_Start(int sec, int strength){
+  shock_interval = sec;
+  if(strength >= 100) strength = 100;
+  int ShockLevel = ShockLevel_max * strength/100;
+  long ShockVoltage = ShockLevel * 255/5.0;
+
+  ledcWrite(0, ShockLevel);
+  Serial.println("ShockLevel Set : " + (String)(ShockLevel) + " / Voltage Set : " + (String)(ShockVoltage));
+  ShockTimer.deleteTimer(ShockTimerId);
+  ShockTimerId = ShockTimer.setInterval(ShockCountTime,ShockTimerFunc);
+} 
+
 //****************************************ES Stage****************************************
 void ES_Stage(int stage){
   Serial.print("ES STAGE" + (String)(stage) + " START :: ");
@@ -89,17 +102,4 @@ void ES_Print(){
   Serial.print("#EsData : " + EsData);
   Serial.print(" #ShockEnd : " + (String)(shock_end));
   Serial.println("");
-}
-
-//****************************************ES Serial****************************************
-void ES_Start(int sec, int strength){
-  shock_interval = sec;
-  if(strength >= 100) strength = 100;
-  ShockLevel = ShockLevel_max * strength/100;
-
-  long realValue = ShockLevel * 255/5.0;
-  ledcWrite(0, ShockLevel);
-  Serial.println("ShockLevel Set : " + (String)(ShockLevel) + " / Voltage Set : " + (String)(realValue));
-  ShockTimer.deleteTimer(ShockTimerId);
-  ShockTimerId = ShockTimer.setInterval(ShockCountTime,ShockTimerFunc);
 }
