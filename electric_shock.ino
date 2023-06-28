@@ -2,7 +2,7 @@
 void EsInit(){
   Serial.println("EsInit");
   pinMode(ES_SHOCK_PIN, OUTPUT);
-  ledcSetup(0, 5000, 0);
+  ledcSetup(0, 5000, 8);
   ledcAttachPin(ES_DATA_PIN, 0);
   EsOn(false);
 }
@@ -95,9 +95,11 @@ void ES_Print(){
 void ES_Start(int sec, int strength){
   shock_interval = sec;
   if(strength >= 100) strength = 100;
-  int ShockLevel = ShockLevel_max * strength/100;
+  ShockLevel = ShockLevel_max * strength/100;
 
+  long realValue = ShockLevel * 255/5.0;
   ledcWrite(0, ShockLevel);
+  Serial.println("ShockLevel Set : " + (String)(ShockLevel) + " / Voltage Set : " + (String)(realValue));
   ShockTimer.deleteTimer(ShockTimerId);
   ShockTimerId = ShockTimer.setInterval(ShockCountTime,ShockTimerFunc);
 }

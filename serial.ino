@@ -39,6 +39,7 @@ void Serial_Read(){
       DFPlayer.pause();
       RiseCNT = 0;
       RiseTimer.deleteTimer(RiseTimerId);
+      ledcWrite(0, 0);
       ShockTimer.deleteTimer(ShockTimerId);
       
       if(recv_data == "connect"){
@@ -53,7 +54,6 @@ void Serial_Read(){
       else if(recv_data == "stage1"){
         LightControl(BLUE, STATIC, STATIC, BREATHE);
         EsStage = 1;
-        Serial.println("curr_EsStage:" + (String)(curr_EsStage) + " / EsStage:" + (String)(EsStage));
         if(curr_EsStage != EsStage){
           DFPlayer.playLargeFolder(2,1);
         }
@@ -65,7 +65,6 @@ void Serial_Read(){
       else if(recv_data == "stage2"){
         LightControl(BLUE, STATIC, STATIC, BREATHE);
         EsStage = 2;
-        Serial.println("curr_EsStage:" + (String)(curr_EsStage) + " / EsStage:" + (String)(EsStage));
         if(curr_EsStage != EsStage){
           DFPlayer.playLargeFolder(2,2);
         }
@@ -77,7 +76,6 @@ void Serial_Read(){
       else if(recv_data == "stage3"){
         LightControl(BLUE, STATIC, STATIC, BREATHE);
         EsStage = 3;
-        Serial.println("curr_EsStage:" + (String)(curr_EsStage) + " / EsStage:" + (String)(EsStage));
         if(curr_EsStage != EsStage){
           DFPlayer.playLargeFolder(2,3);
         }
@@ -103,14 +101,14 @@ void Serial_Read(){
       else if(recv_data == "shock"){
         DFPlayer.start();
         Serial.println("Shock");
-        if(EsStage == 1)          ES_Start(10, 40);
-        else if(EsStage == 2)     ES_Start(5, 70);
-        else if(EsStage == 3)     ES_Start(5, 100);
+        if(EsStage == 1)        ES_Start(10, 40);
+        else if(EsStage == 2)   ES_Start(5, 70);
+        else if(EsStage == 3)   ES_Start(5, 100);
         curr_EsStage = EsStage;
       }
+      else
+        Serial.println("[ERROR]" + recv_data);
     }
-    else
-      Serial.println("[ERROR] : " + recv_data);
   }
 }
 
@@ -119,4 +117,3 @@ void SerialSend(String data){
   subTTGO.print(SendData);
   Serial.println("to Main : " + SendData);
 }
-// Serial.println("curr_EsStage:" + (String)(curr_EsStage) + " / EsStage:" + (String)(EsStage));

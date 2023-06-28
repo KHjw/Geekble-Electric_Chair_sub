@@ -48,7 +48,7 @@ void LightMode(int neo_code, int color_code, int mode);
 void Serial_HandShake();
 #line 32 "c:\\Github\\Geekble-Electric_Chair_sub\\serial.ino"
 void Serial_Read();
-#line 108 "c:\\Github\\Geekble-Electric_Chair_sub\\serial.ino"
+#line 115 "c:\\Github\\Geekble-Electric_Chair_sub\\serial.ino"
 void SerialSend(String data);
 #line 1 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
 void TimerInit();
@@ -129,7 +129,7 @@ void DfpInit(){
 void EsInit(){
   Serial.println("EsInit");
   pinMode(ES_SHOCK_PIN, OUTPUT);
-  ledcSetup(0, 5000, 0);
+  ledcSetup(0, 5000, 8);
   ledcAttachPin(ES_DATA_PIN, 0);
   EsOn(false);
 }
@@ -222,9 +222,10 @@ void ES_Print(){
 void ES_Start(int sec, int strength){
   shock_interval = sec;
   if(strength >= 100) strength = 100;
-  int ShockLevel = ShockLevel_max * strength/100;
+  ShockLevel = ShockLevel_max * strength/100;
 
   ledcWrite(0, ShockLevel);
+  Serial.println("ShockLevel Set : " + (String)(ShockLevel));
   ShockTimer.deleteTimer(ShockTimerId);
   ShockTimerId = ShockTimer.setInterval(ShockCountTime,ShockTimerFunc);
 }
@@ -342,6 +343,7 @@ void Serial_Read(){
       DFPlayer.pause();
       RiseCNT = 0;
       RiseTimer.deleteTimer(RiseTimerId);
+      ledcWrite(0, 0);
       ShockTimer.deleteTimer(ShockTimerId);
       
       if(recv_data == "connect"){
@@ -354,23 +356,19 @@ void Serial_Read(){
       else if(recv_data == "activate_t2") 	  LightControl(GREEN,  BLINK,  BLINK,  BREATHE);
       else if(recv_data == "activate_t3") 	  LightControl(BLUE,	 STATIC, STATIC, BREATHE);
       else if(recv_data == "stage1"){
-        LightControl(BLUE,   STATIC, STATIC, BREATHE);
+        LightControl(BLUE, STATIC, STATIC, BREATHE);
         EsStage = 1;
-        Serial.println("curr_EsStage:" + (String)(curr_EsStage) + " / EsStage:" + (String)(EsStage));
         if(curr_EsStage != EsStage){
-          Serial.println("diff");
           DFPlayer.playLargeFolder(2,1);
         }
         else{
-          Serial.println("same");
           ES_Start(10, 40);
           DFPlayer.start();
         }
       }
       else if(recv_data == "stage2"){
-        LightControl(BLUE,   STATIC, STATIC, BREATHE);
+        LightControl(BLUE, STATIC, STATIC, BREATHE);
         EsStage = 2;
-        Serial.println("curr_EsStage:" + (String)(curr_EsStage) + " / EsStage:" + (String)(EsStage));
         if(curr_EsStage != EsStage){
           DFPlayer.playLargeFolder(2,2);
         }
@@ -380,9 +378,8 @@ void Serial_Read(){
         }
       }
       else if(recv_data == "stage3"){
-        LightControl(BLUE,   STATIC, STATIC, BREATHE);
+        LightControl(BLUE, STATIC, STATIC, BREATHE);
         EsStage = 3;
-        Serial.println("curr_EsStage:" + (String)(curr_EsStage) + " / EsStage:" + (String)(EsStage));
         if(curr_EsStage != EsStage){
           DFPlayer.playLargeFolder(2,3);
         }
@@ -391,19 +388,30 @@ void Serial_Read(){
           DFPlayer.start();
         }
       }
-      else if(recv_data == "cool")						LightControl(RED,    STATIC, STATIC, BREATHE);
-      else if(recv_data == "rescue")				 {LightControl(GREEN,  STATIC, BLINK,  RISE);     DFPlayer.start();}
-      else if(recv_data == "rescue_suc")		 {AllNeoBlink(GREEN, 4, 500);   LightControl(RED, STATIC, STATIC, BREATHE);}
-      else if(recv_data == "rescue_fail")		 {DFPlayer.start();             AllNeoBlink(RED, 5, 250);}
+      else if(recv_data == "cool")
+        LightControl(RED,    STATIC, STATIC, BREATHE);
+      else if(recv_data == "rescue"){
+        LightControl(GREEN, STATIC, BLINK, RISE);
+        DFPlayer.start();
+      }
+      else if(recv_data == "rescue_suc"){
+        AllNeoBlink(GREEN, 4, 500);
+        LightControl(RED, STATIC, STATIC, BREATHE);
+      }
+      else if(recv_data == "rescue_fail"){
+        DFPlayer.start();
+        AllNeoBlink(RED, 5, 250);
+      }
       else if(recv_data == "shock"){
         DFPlayer.start();
         Serial.println("Shock");
-        if(EsStage == 1)          ES_Start(10, 40);
-        else if(EsStage == 2)     ES_Start(5, 70);
-        else if(EsStage == 3)     ES_Start(5, 100);
+        if(EsStage == 1)        ES_Start(10, 40);
+        else if(EsStage == 2)   ES_Start(5, 70);
+        else if(EsStage == 3)   ES_Start(5, 100);
         curr_EsStage = EsStage;
       }
-      else    Serial.println("[ERROR]" + recv_data);
+      else
+        Serial.println("[ERROR]" + recv_data);
     }
   }
 }
@@ -413,7 +421,6 @@ void SerialSend(String data){
   subTTGO.print(SendData);
   Serial.println("to Main : " + SendData);
 }
-// Serial.println("curr_EsStage:" + (String)(curr_EsStage) + " / EsStage:" + (String)(EsStage));
 #line 1 "c:\\Github\\Geekble-Electric_Chair_sub\\timer.ino"
 void TimerInit(){
     Serial.println("TimerInit");

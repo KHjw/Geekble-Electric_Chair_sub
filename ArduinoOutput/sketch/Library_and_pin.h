@@ -20,7 +20,7 @@
 #define	NEO_TAG			26
 #define NEO_BOT			27
 
-#define ES_SHOCK_PIN    15
-#define ES_DATA_PIN     21  // Logic 설치 필요
+#define ES_SHOCK_PIN    33
+#define ES_DATA_PIN     22
 
 #endif
